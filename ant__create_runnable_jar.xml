@@ -6,7 +6,7 @@
 		
 	<property name="java.source.character.set" value="iso-8859-1"/>
 
-	<property name="jar.main.class" value="org.yeastrc.limelight.xml.comet_percolator.main.MainProgram" />
+	<property name="jar.main.class" value="org.yeastrc.limelight.xml.crux_comet_percolator.main.MainProgram" />
 
 	<property name="output_runnable_jar" value="cometPercolator2LimelightXML.jar"/>
 
