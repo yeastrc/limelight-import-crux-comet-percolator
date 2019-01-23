@@ -140,9 +140,19 @@ public class PercolatorPSM {
 	public int getScanNumber() {
 		return scanNumber;
 	}
+
+	public int getFileIndex() {
+		return fileIndex;
+	}
+
+	public void setFileIndex(int fileIndex) {
+		this.fileIndex = fileIndex;
+	}
+
 	/**
 	 * @param scanNumber the scanNumber to set
 	 */
+
 	public void setScanNumber(int scanNumber) {
 		this.scanNumber = scanNumber;
 	}
@@ -153,4 +163,5 @@ public class PercolatorPSM {
 	private String reportedPeptide;
 	private String psmId;
 	private int scanNumber;
+	private int fileIndex;
 }

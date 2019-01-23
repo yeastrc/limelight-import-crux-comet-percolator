@@ -2,7 +2,7 @@ package org.yeastrc.limelight.xml.crux_comet_percolator.reader;
 
 import org.yeastrc.limelight.xml.crux_comet_percolator.objects.CometReportedPeptide;
 import org.yeastrc.limelight.xml.crux_comet_percolator.objects.CometResults;
-import org.yeastrc.limelight.xml.crux_comet_percolator.objects.PercolatorResults;
+import org.yeastrc.limelight.xml.crux_comet_percolator.objects.IndexedPercolatorResults;
 import org.yeastrc.limelight.xml.crux_comet_percolator.utils.CometParsingUtils;
 
 public class CometPercolatorValidator {
@@ -14,7 +14,7 @@ public class CometPercolatorValidator {
 	 * @param percolatorResults
 	 * @throws Exception if the data could not be validated
 	 */
-	public static void validateData( CometResults cometResults, PercolatorResults percolatorResults ) throws Exception {
+	public static void validateData( CometResults cometResults, IndexedPercolatorResults percolatorResults ) throws Exception {
 		
 		for( String percolatorReportedPeptide : percolatorResults.getReportedPeptideResults().keySet() ) {
 			

@@ -25,18 +25,19 @@ import org.yeastrc.limelight.xml.crux_comet_percolator.objects.CometReportedPept
 import org.yeastrc.limelight.xml.crux_comet_percolator.objects.CometResults;
 import org.yeastrc.limelight.xml.crux_comet_percolator.objects.ConversionParameters;
 import org.yeastrc.limelight.xml.crux_comet_percolator.objects.PercolatorPSM;
-import org.yeastrc.limelight.xml.crux_comet_percolator.objects.PercolatorPeptideData;
-import org.yeastrc.limelight.xml.crux_comet_percolator.objects.PercolatorResults;
+import org.yeastrc.limelight.xml.crux_comet_percolator.objects.IndexedPercolatorPeptideData;
+import org.yeastrc.limelight.xml.crux_comet_percolator.objects.IndexedPercolatorResults;
 import org.yeastrc.limelight.xml.crux_comet_percolator.utils.CometParsingUtils;
 
 public class XMLBuilder {
 
 	public void buildAndSaveXML( ConversionParameters conversionParameters,
 			                     CometResults cometResults,
-			                     PercolatorResults percolatorResults,
+			                     IndexedPercolatorResults percolatorResults,
 			                     CometParameters cometParameters )
     throws Exception {
 
+	    /*
 		LimelightInput limelightInputRoot = new LimelightInput();
 
 		limelightInputRoot.setFastaFilename( conversionParameters.getFastaFile().getName() );
@@ -211,7 +212,7 @@ public class XMLBuilder {
 				xProteinForPeptide.setId( BigInteger.valueOf( matchedProteinId ) );
 			}
 
-			PercolatorPeptideData percolatorPeptideData = percolatorResults.getReportedPeptideResults().get( percolatorReportedPeptide );
+			IndexedPercolatorPeptideData indexedPercolatorPeptideData = percolatorResults.getReportedPeptideResults().get( percolatorReportedPeptide );
 			
 			// add in the filterable peptide annotations (e.g., q-value)
 			ReportedPeptideAnnotations xmlReportedPeptideAnnotations = new ReportedPeptideAnnotations();
@@ -227,7 +228,7 @@ public class XMLBuilder {
 				
 				xmlFilterableReportedPeptideAnnotation.setAnnotationName( PeptideAnnotationTypes.PERCOLATOR_ANNOTATION_TYPE_QVALUE );
 				xmlFilterableReportedPeptideAnnotation.setSearchProgram( Constants.PROGRAM_NAME_PERCOLATOR );
-				xmlFilterableReportedPeptideAnnotation.setValue( BigDecimal.valueOf( percolatorPeptideData.getPercolatorPeptideScores().getqValue()) );
+				xmlFilterableReportedPeptideAnnotation.setValue( BigDecimal.valueOf( indexedPercolatorPeptideData.getPercolatorPeptideScores().getqValue()) );
 			}
 			// handle p-value
 			{
@@ -236,7 +237,7 @@ public class XMLBuilder {
 				
 				xmlFilterableReportedPeptideAnnotation.setAnnotationName( PeptideAnnotationTypes.PERCOLATOR_ANNOTATION_TYPE_PVALUE );
 				xmlFilterableReportedPeptideAnnotation.setSearchProgram( Constants.PROGRAM_NAME_PERCOLATOR );
-				xmlFilterableReportedPeptideAnnotation.setValue( BigDecimal.valueOf( percolatorPeptideData.getPercolatorPeptideScores().getpValue()) );
+				xmlFilterableReportedPeptideAnnotation.setValue( BigDecimal.valueOf( indexedPercolatorPeptideData.getPercolatorPeptideScores().getpValue()) );
 			}
 			// handle pep
 			{
@@ -245,7 +246,7 @@ public class XMLBuilder {
 				
 				xmlFilterableReportedPeptideAnnotation.setAnnotationName( PeptideAnnotationTypes.PERCOLATOR_ANNOTATION_TYPE_PEP );
 				xmlFilterableReportedPeptideAnnotation.setSearchProgram( Constants.PROGRAM_NAME_PERCOLATOR );
-				xmlFilterableReportedPeptideAnnotation.setValue( BigDecimal.valueOf( percolatorPeptideData.getPercolatorPeptideScores().getPep()) );
+				xmlFilterableReportedPeptideAnnotation.setValue( BigDecimal.valueOf( indexedPercolatorPeptideData.getPercolatorPeptideScores().getPep()) );
 			}
 			// handle svm score
 			{
@@ -254,7 +255,7 @@ public class XMLBuilder {
 				
 				xmlFilterableReportedPeptideAnnotation.setAnnotationName( PeptideAnnotationTypes.PERCOLATOR_ANNOTATION_TYPE_SVMSCORE );
 				xmlFilterableReportedPeptideAnnotation.setSearchProgram( Constants.PROGRAM_NAME_PERCOLATOR );
-				xmlFilterableReportedPeptideAnnotation.setValue( BigDecimal.valueOf( percolatorPeptideData.getPercolatorPeptideScores().getSvmScore()) );
+				xmlFilterableReportedPeptideAnnotation.setValue( BigDecimal.valueOf( indexedPercolatorPeptideData.getPercolatorPeptideScores().getSvmScore()) );
 			}
 			
 			
@@ -419,7 +420,8 @@ public class XMLBuilder {
 		
 		//make the xml file
 		CreateImportFileFromJavaObjectsMain.getInstance().createImportFileFromJavaObjectsMain( conversionParameters.getLimelightXMLOutputFile(), limelightInputRoot);
-		
+
+	*/
 	}
 	
 	

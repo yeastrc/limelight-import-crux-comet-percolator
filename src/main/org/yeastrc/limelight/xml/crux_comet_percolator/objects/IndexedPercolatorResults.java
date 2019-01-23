@@ -20,7 +20,10 @@ package org.yeastrc.limelight.xml.crux_comet_percolator.objects;
 
 import java.util.Map;
 
-public class PercolatorResults {
+/**
+ *
+ */
+public class IndexedPercolatorResults {
 
 	/**
 	 * @return the percolatorVersion
@@ -35,22 +38,19 @@ public class PercolatorResults {
 		this.percolatorVersion = percolatorVersion;
 	}
 
-	/**
-	 * @return the reportedPeptideResults
-	 */
-	public Map<String, PercolatorPeptideData> getReportedPeptideResults() {
-		return reportedPeptideResults;
-	}
-	/**
-	 * @param reportedPeptideResults the reportedPeptideResults to set
-	 */
-	public void setReportedPeptideResults(Map<String, PercolatorPeptideData> reportedPeptideResults) {
-		this.reportedPeptideResults = reportedPeptideResults;
+	public Map<String, IndexedPercolatorPeptideData> getIndexedReportedPeptideResults() {
+		return indexedReportedPeptideResults;
 	}
 
+	public void setIndexedReportedPeptideResults(Map<String, IndexedPercolatorPeptideData> indexedReportedPeptideResults) {
+		this.indexedReportedPeptideResults = indexedReportedPeptideResults;
+	}
 
+	/**
+	 * Percolator results,
+	 */
+	private Map<String, IndexedPercolatorPeptideData> indexedReportedPeptideResults;
 
 	private String percolatorVersion;
-	private Map<String, PercolatorPeptideData> reportedPeptideResults;
-	
+
 }

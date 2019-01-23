@@ -25,31 +25,41 @@ public class PercolatorParsingUtils {
 
 	/**
 	 * Examples:
-	 * T-46425-94.65
-	 * T-44282-90.35-2
+	 * target_17_15544_2_1
 	 * @param scanId
 	 * @return
 	 */
 	public static int getScanNumberFromScanId( String scanId ) {
 		
-		Pattern p1 = Pattern.compile( "^[TD]-(\\d+)-.+$" );
-		Pattern p2 = Pattern.compile( "^.+_(\\d+)_\\d+_\\d$" );
+		Pattern p1 = Pattern.compile( "^target_\\d+_(\\d+)_.+$" );
 
 		Matcher m = p1.matcher( scanId );
 
 		if( m.matches() ) {
 			return Integer.parseInt( m.group( 1 ) );
 		}
-		
-		m = p2.matcher( scanId );
+
+
+		throw new IllegalArgumentException( "Scan id is not of the expected syntax. Got: " + scanId + ", expected something like: target_17_15544_2_1" );
+	}
+
+	/**
+	 * Get the file index from the scan id
+	 * @param scanId
+	 * @return
+	 */
+	public static int getFileIndexFromScanId( String scanId ) {
+
+		Pattern p1 = Pattern.compile( "^target_(\\d+)_\\d+_.+$" );
+
+		Matcher m = p1.matcher( scanId );
 
 		if( m.matches() ) {
 			return Integer.parseInt( m.group( 1 ) );
 		}
 
-		
-		throw new IllegalArgumentException( "Scan id is not of the expected syntax. Got: " + scanId + ", expected something like: T-46425-94.6" );
-
+		throw new IllegalArgumentException( "Scan id is not of the expected syntax. Got: " + scanId + ", expected something like: target_17_15544_2_1" );
 	}
-	
+
+
 }

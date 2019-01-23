@@ -2,10 +2,14 @@ package org.yeastrc.limelight.xml.crux_comet_percolator.objects;
 
 import java.util.Map;
 
-public class PercolatorPeptideData {
+public class IndexedPercolatorPeptideData {
 
 	private PercolatorPeptideScores percolatorPeptideScores;
-	private Map<Integer, PercolatorPSM> percolatorPSMs;
+
+	/**
+	 * The percolator PSMs. First keyed by file index, then by scan number
+	 */
+	private Map<Integer, Map<Integer,PercolatorPSM>> percolatorPSMs;
 	
 	/**
 	 * @return the percolatorPeptideScores
@@ -19,18 +23,21 @@ public class PercolatorPeptideData {
 	public void setPercolatorPeptideScores(PercolatorPeptideScores percolatorPeptideScores) {
 		this.percolatorPeptideScores = percolatorPeptideScores;
 	}
+
+
 	/**
-	 * @return the percolatorPSMs
+	 * Get the percolator PSMs. First keyed by file index, then by scan number
+	 * @return
 	 */
-	public Map<Integer, PercolatorPSM> getPercolatorPSMs() {
+	public Map<Integer, Map<Integer, PercolatorPSM>> getPercolatorPSMs() {
 		return percolatorPSMs;
 	}
+
 	/**
-	 * @param percolatorPSMs the percolatorPSMs to set
+	 * Set the percolator PSMs. First keyed by file index, then by scan number
+	 * @param percolatorPSMs
 	 */
-	public void setPercolatorPSMs(Map<Integer, PercolatorPSM> percolatorPSMs) {
+	public void setPercolatorPSMs(Map<Integer, Map<Integer, PercolatorPSM>> percolatorPSMs) {
 		this.percolatorPSMs = percolatorPSMs;
 	}
-	
-	
 }
