@@ -10,6 +10,7 @@ public class CruxOutputParameters {
     private Collection<File> pepXMLFiles;
     private File percolatorOutputXMLFile;
     private String cruxVersion;
+    private File cruxOutputDirectory;
 
     public String getCruxVersion() {
         return cruxVersion;
@@ -41,5 +42,13 @@ public class CruxOutputParameters {
 
     public void setPercolatorOutputXMLFile(File percolatorOutputXMLFile) {
         this.percolatorOutputXMLFile = percolatorOutputXMLFile;
+    }
+
+    public File getCruxOutputDirectory() {
+        return cruxOutputDirectory;
+    }
+
+    public void setCruxOutputDirectory(File cruxOutputDirectory) {
+        this.cruxOutputDirectory = cruxOutputDirectory;
     }
 }

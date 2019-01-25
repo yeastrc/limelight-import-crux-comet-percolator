@@ -248,15 +248,22 @@ public class MatchedProteinsBuilder {
 
 			fastaReader = FASTAReader.getInstance( fastaFile );
 			int count = 0;
+			Collection<String> addedProteins = new HashSet<>();
+
 			System.err.println( "" );
 
 			for( FASTAEntry entry = fastaReader.readNext(); entry != null; entry = fastaReader.readNext() ) {
 
 				count++;
 
-				System.err.print( "\tTested " + count + " FASTA entries...\r" );
+				System.err.print( "\t\tTested " + count + " FASTA entries...\r" );
 
 				for( String proteinName : proteinNames ) {
+
+					// if we've already added an entry using this protein name, there shouldn't be any others
+					if( addedProteins.contains( proteinName ) ) {
+						continue;
+					}
 
 					if( fastaEntryContainProteinName( proteinName, entry ) ) {
 
@@ -290,6 +297,7 @@ public class MatchedProteinsBuilder {
 
 						}//end iterating over fasta headers
 
+						addedProteins.add( proteinName );
 
 						break;	// don't need to test more protein names, we are including this protein
 

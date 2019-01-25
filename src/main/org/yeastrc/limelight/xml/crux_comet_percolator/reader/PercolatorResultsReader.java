@@ -58,6 +58,7 @@ public class PercolatorResultsReader {
 		
 		IndexedPercolatorResults results = new IndexedPercolatorResults();
 		results.setPercolatorVersion( version );
+		results.setIndexedReportedPeptideResults( percolatorPeptideData );
 
 		return results;
 	}

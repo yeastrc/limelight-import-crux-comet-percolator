@@ -86,6 +86,15 @@ public class CometReportedPeptide {
 	}
 
 	public Collection<String> proteinMatches;
-	
-	
+
+
+	@Override
+	public String toString() {
+		return "CometReportedPeptide{" +
+				"reportedPeptideString='" + reportedPeptideString + '\'' +
+				", nakedPeptide='" + nakedPeptide + '\'' +
+				", mods=" + mods +
+				", proteinMatches=" + proteinMatches +
+				'}';
+	}
 }

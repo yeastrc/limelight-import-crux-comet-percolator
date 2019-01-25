@@ -30,6 +30,7 @@ public class CruxDirectoryReader {
 
         cop.setPepXMLFiles( getPepXMLFiles( workingDirectory ) );
         cop.setPercolatorOutputXMLFile( cruxOutputPercolatorXMLFile );
+        cop.setCruxOutputDirectory( cruxOutputDirectory );
 
         try ( InputStream is = new FileInputStream( cruxOutputLogFile ) ) {
             cop.setCruxVersion( CruxLogFileParser.getCruxVersionFromLogFile( is ) );

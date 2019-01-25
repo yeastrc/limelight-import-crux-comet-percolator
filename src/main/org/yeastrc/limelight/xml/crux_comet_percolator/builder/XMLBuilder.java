@@ -1,5 +1,6 @@
 package org.yeastrc.limelight.xml.crux_comet_percolator.builder;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -19,14 +20,7 @@ import org.yeastrc.limelight.xml.crux_comet_percolator.annotation.PeptideAnnotat
 import org.yeastrc.limelight.xml.crux_comet_percolator.annotation.PeptideAnnotationTypes;
 import org.yeastrc.limelight.xml.crux_comet_percolator.annotation.PeptideDefaultVisibleAnnotationTypes;
 import org.yeastrc.limelight.xml.crux_comet_percolator.constants.Constants;
-import org.yeastrc.limelight.xml.crux_comet_percolator.objects.CometPSM;
-import org.yeastrc.limelight.xml.crux_comet_percolator.objects.CometParameters;
-import org.yeastrc.limelight.xml.crux_comet_percolator.objects.CometReportedPeptide;
-import org.yeastrc.limelight.xml.crux_comet_percolator.objects.CometResults;
-import org.yeastrc.limelight.xml.crux_comet_percolator.objects.ConversionParameters;
-import org.yeastrc.limelight.xml.crux_comet_percolator.objects.PercolatorPSM;
-import org.yeastrc.limelight.xml.crux_comet_percolator.objects.IndexedPercolatorPeptideData;
-import org.yeastrc.limelight.xml.crux_comet_percolator.objects.IndexedPercolatorResults;
+import org.yeastrc.limelight.xml.crux_comet_percolator.objects.*;
 import org.yeastrc.limelight.xml.crux_comet_percolator.utils.CometParsingUtils;
 
 public class XMLBuilder {
@@ -34,10 +28,12 @@ public class XMLBuilder {
 	public void buildAndSaveXML( ConversionParameters conversionParameters,
 			                     CometResults cometResults,
 			                     IndexedPercolatorResults percolatorResults,
-			                     CometParameters cometParameters )
+			                     CometParameters cometParameters,
+								 CruxOutputParameters cruxOutputParams,
+								 Integer fileIndex)
     throws Exception {
 
-	    /*
+
 		LimelightInput limelightInputRoot = new LimelightInput();
 
 		limelightInputRoot.setFastaFilename( conversionParameters.getFastaFile().getName() );
@@ -50,7 +46,18 @@ public class XMLBuilder {
 		
 		SearchPrograms searchPrograms = new SearchPrograms();
 		searchProgramInfo.setSearchPrograms( searchPrograms );
-		
+
+		{
+			SearchProgram searchProgram = new SearchProgram();
+			searchPrograms.getSearchProgram().add( searchProgram );
+
+			searchProgram.setName( Constants.PROGRAM_NAME_CRUX );
+			searchProgram.setDisplayName( Constants.PROGRAM_NAME_CRUX );
+			searchProgram.setVersion( cruxOutputParams.getCruxVersion() );
+
+
+		}
+
 		{
 			SearchProgram searchProgram = new SearchProgram();
 			searchPrograms.getSearchProgram().add( searchProgram );
@@ -188,7 +195,7 @@ public class XMLBuilder {
 		limelightInputRoot.setReportedPeptides( reportedPeptides );
 		
 		// iterate over each distinct reported peptide
-		for( String percolatorReportedPeptide : percolatorResults.getReportedPeptideResults().keySet() ) {
+		for( String percolatorReportedPeptide : percolatorResults.getIndexedReportedPeptideResults().keySet() ) {
 			
 			CometReportedPeptide cometReportedPeptide = CometParsingUtils.getCometReportedPeptideForString( percolatorReportedPeptide, cometResults );
 			
@@ -212,7 +219,7 @@ public class XMLBuilder {
 				xProteinForPeptide.setId( BigInteger.valueOf( matchedProteinId ) );
 			}
 
-			IndexedPercolatorPeptideData indexedPercolatorPeptideData = percolatorResults.getReportedPeptideResults().get( percolatorReportedPeptide );
+			IndexedPercolatorPeptideData indexedPercolatorPeptideData = percolatorResults.getIndexedReportedPeptideResults().get( percolatorReportedPeptide );
 			
 			// add in the filterable peptide annotations (e.g., q-value)
 			ReportedPeptideAnnotations xmlReportedPeptideAnnotations = new ReportedPeptideAnnotations();
@@ -293,7 +300,7 @@ public class XMLBuilder {
 
 			// iterate over all PSMs for this reported peptide
 
-			for( int scanNumber : percolatorResults.getReportedPeptideResults().get( percolatorReportedPeptide ).getPercolatorPSMs().keySet() ) {
+			for( int scanNumber : percolatorResults.getIndexedReportedPeptideResults().get( percolatorReportedPeptide ).getPercolatorPSMs().get( fileIndex ).keySet() ) {
 
 				CometPSM psm = cometResults.getPeptidePSMMap().get( cometReportedPeptide ).get( scanNumber );
 
@@ -366,7 +373,7 @@ public class XMLBuilder {
 				}
 
 				// handle percolator scores
-				PercolatorPSM percolatorPSM = percolatorResults.getReportedPeptideResults().get( percolatorReportedPeptide ).getPercolatorPSMs().get( scanNumber );
+				PercolatorPSM percolatorPSM = percolatorResults.getIndexedReportedPeptideResults().get( percolatorReportedPeptide ).getPercolatorPSMs().get( fileIndex ).get( scanNumber );
 				{
 					FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
 					xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add( xmlFilterablePsmAnnotation );
@@ -419,10 +426,14 @@ public class XMLBuilder {
 		
 		
 		//make the xml file
-		CreateImportFileFromJavaObjectsMain.getInstance().createImportFileFromJavaObjectsMain( conversionParameters.getLimelightXMLOutputFile(), limelightInputRoot);
+		CreateImportFileFromJavaObjectsMain.getInstance().createImportFileFromJavaObjectsMain( getLimelightXMLFile( cruxOutputParams, fileIndex ), limelightInputRoot);
 
-	*/
 	}
-	
+
+	private static File getLimelightXMLFile(CruxOutputParameters cruxOutputParameters, Integer fileIndex ) {
+
+		return new File( cruxOutputParameters.getCruxOutputDirectory(), cruxOutputParameters.getCruxFileIndexMap().get( fileIndex ) + ".limelight.xml" );
+
+	}
 	
 }

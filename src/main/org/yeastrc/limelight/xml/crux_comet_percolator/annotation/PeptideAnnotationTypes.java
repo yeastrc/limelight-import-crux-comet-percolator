@@ -45,8 +45,7 @@ public class PeptideAnnotationTypes {
 				type.setName( PERCOLATOR_ANNOTATION_TYPE_QVALUE );
 				type.setDescription( "Q-value" );
 				type.setFilterDirection( FilterDirectionType.BELOW );
-				type.setDefaultFilterValue( BigDecimal.valueOf( 0.05 ) );
-	
+
 				types.add( type );
 			}
 			

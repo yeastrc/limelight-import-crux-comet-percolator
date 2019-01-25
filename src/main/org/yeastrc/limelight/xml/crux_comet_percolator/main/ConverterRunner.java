@@ -22,13 +22,15 @@ import org.yeastrc.limelight.xml.crux_comet_percolator.builder.XMLBuilder;
 import org.yeastrc.limelight.xml.crux_comet_percolator.objects.*;
 import org.yeastrc.limelight.xml.crux_comet_percolator.reader.*;
 
+import java.io.File;
+
 public class ConverterRunner {
 
 	// conveniently get a new instance of this class
 	public static ConverterRunner createInstance() { return new ConverterRunner(); }
 	
 	
-	public void convertCometPercolatorToLimelightXML(ConversionParameters conversionParameters ) throws Throwable {
+	public void convertCruxCometPercolatorToLimelightXML(ConversionParameters conversionParameters ) throws Throwable {
 
 		System.err.print( "Determining location of Crux output files..." );
 		CruxOutputParameters cruxOutputParams = CruxDirectoryReader.processCruxDirectory( conversionParameters.getCruxOutputDirectory() );
@@ -39,17 +41,34 @@ public class ConverterRunner {
 		System.err.println( " Done." );
 		
 		System.err.print( "Reading Percolator XML data into memory..." );
-		IndexedPercolatorResults percResults = PercolatorResultsReader.getPercolatorResults( conversionParameters.getPercolatorXMLFile() );
+		IndexedPercolatorResults percResults = PercolatorResultsReader.getPercolatorResults( cruxOutputParams.getPercolatorOutputXMLFile() );
+		System.err.print( " Got " + percResults.getIndexedReportedPeptideResults().size() + " peptides. " );
 		System.err.println( " Done." );
 
-		/*
-		System.err.print( "Verifying all percolator results have comet results..." );
-		CometPercolatorValidator.validateData( cometResults, percResults );
-		System.err.println( " Done." );
+		// process each pepXML file separately
+		for( Integer fileIndex : cruxOutputParams.getCruxFileIndexMap().keySet() ) {
 
-		System.err.print( "Writing out XML..." );
-		(new XMLBuilder()).buildAndSaveXML( conversionParameters, cometResults, percResults, cometParams );
-		System.err.println( " Done." );
-		*/
+			String pepXMLFileName = cruxOutputParams.getCruxFileIndexMap().get( fileIndex );
+			File pepXMLFile = new File( conversionParameters.getCruxOutputDirectory(), pepXMLFileName );
+
+			System.err.println( "\nProcess pepXML file: " + pepXMLFileName );
+
+			if( !pepXMLFile.exists() ) {
+				throw new Exception( "Could not find pepXML file: " + pepXMLFile.getAbsolutePath() );
+			}
+
+			System.err.print( "\tReading Comet pepXML data into memory..." );
+			CometResults cometResults = CometPepXMLResultsParser.getCometResults( pepXMLFile, cometParams );
+			System.err.println( " Done." );
+
+			System.err.print( "\tVerifying all percolator results have comet results..." );
+			CometPercolatorValidator.validateData( cometResults, percResults, fileIndex );
+			System.err.println( " Done." );
+
+			System.err.print( "\tWriting out XML..." );
+			(new XMLBuilder()).buildAndSaveXML( conversionParameters, cometResults, percResults, cometParams, cruxOutputParams, fileIndex );
+			System.err.println( " Done." );
+		}
+
 	}
 }

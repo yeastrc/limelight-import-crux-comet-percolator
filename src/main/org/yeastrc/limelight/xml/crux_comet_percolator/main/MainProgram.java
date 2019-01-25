@@ -49,10 +49,8 @@ public class MainProgram {
 		CmdLineParser cmdLineParser = new CmdLineParser();
 
 		CmdLineParser.Option cometParamOpt = cmdLineParser.addStringOption( 'c', "comet_params" );	
-		CmdLineParser.Option outfileOpt = cmdLineParser.addStringOption( 'o', "out" );	
-		CmdLineParser.Option pepXMLOpt = cmdLineParser.addStringOption( 'p', "pepxml" );	
-		CmdLineParser.Option percXMLOpt = cmdLineParser.addStringOption( 'r', "percolator" );	
 		CmdLineParser.Option fastaFileOpt = cmdLineParser.addStringOption( 'f', "fasta" );
+		CmdLineParser.Option directoryOpt = cmdLineParser.addStringOption( 'd', "directory" );
 
 		// parse command line options
 		try { cmdLineParser.parse(args); }
@@ -66,26 +64,12 @@ public class MainProgram {
 		}
 
 		String cometParamFilePath = (String)cmdLineParser.getOptionValue( cometParamOpt );
-		String outFilePath = (String)cmdLineParser.getOptionValue( outfileOpt );
-		String pepXMLFilePath = (String)cmdLineParser.getOptionValue( pepXMLOpt );
-		String percXMLFilePath = (String)cmdLineParser.getOptionValue( percXMLOpt );
 		String fastaFilePath = (String)cmdLineParser.getOptionValue( fastaFileOpt );
+		String cruxDirectoryName = (String)cmdLineParser.getOptionValue( directoryOpt );
 
 		File cometParamFile = new File( cometParamFilePath );
 		if( !cometParamFile.exists() ) {
 			System.err.println( "Could not find comet params file: " + cometParamFilePath );
-			System.exit( 1 );
-		}
-
-		File pepXMLFile = new File( pepXMLFilePath );
-		if( !pepXMLFile.exists() ) {
-			System.err.println( "Could not find pepXML file: " + pepXMLFilePath );
-			System.exit( 1 );
-		}
-		
-		File percXMLFile = new File( percXMLFilePath );
-		if( !percXMLFile.exists() ) {
-			System.err.println( "Could not find percolator XML file: " + percXMLFilePath );
 			System.exit( 1 );
 		}
 
@@ -95,18 +79,22 @@ public class MainProgram {
 			System.exit( 1 );
 		}
 
+		File cruxDirectory = new File( cruxDirectoryName );
+		if( !cruxDirectory.exists() ) {
+			System.err.println( "Could not find crux directory: " + cruxDirectoryName );
+			System.exit( 1 );
+		}
+
 		ConversionProgramInfo cpi = ConversionProgramInfo.createInstance( String.join( " ",  args ) );        
 
 		ConversionParameters cp = new ConversionParameters();
 		cp.setConversionProgramInfo( cpi );
 		cp.setFastaFile( fastaFile );
 		cp.setCometParametersFile( cometParamFile );
-		cp.setPepXMLFile( pepXMLFile );
-		cp.setPercolatorXMLFile( percXMLFile );
-		cp.setLimelightXMLOutputFile( new File( outFilePath ) );
+		cp.setCruxOutputDirectory( cruxDirectory );
 
 		//try {
-			ConverterRunner.createInstance().convertCometPercolatorToLimelightXML(cp);
+			ConverterRunner.createInstance().convertCruxCometPercolatorToLimelightXML(cp);
 //		} catch( Throwable t ) {
 //			System.err.println( "Encountered error during conversion: " + t.getMessage() );
 //			System.exit( 1 );
@@ -124,7 +112,7 @@ public class MainProgram {
 
 			String line = null;
 			while ( ( line = br.readLine() ) != null )
-				System.out.println( line );				
+				System.out.println( line );
 
 		} catch ( Exception e ) {
 			System.out.println( "Error printing help." );

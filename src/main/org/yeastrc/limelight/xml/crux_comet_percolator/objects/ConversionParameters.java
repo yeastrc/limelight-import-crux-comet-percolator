@@ -47,30 +47,6 @@ public class ConversionParameters {
 		this.cometParametersFile = cometParametersFile;
 	}
 	/**
-	 * @return the limelightXMLOutputFile
-	 */
-	public File getLimelightXMLOutputFile() {
-		return limelightXMLOutputFile;
-	}
-	/**
-	 * @param limelightXMLOutputFile the limelightXMLOutputFile to set
-	 */
-	public void setLimelightXMLOutputFile(File limelightXMLOutputFile) {
-		this.limelightXMLOutputFile = limelightXMLOutputFile;
-	}
-	/**
-	 * @return the pepXMLFile
-	 */
-	public File getPepXMLFile() {
-		return pepXMLFile;
-	}
-	/**
-	 * @param pepXMLFile the pepXMLFile to set
-	 */
-	public void setPepXMLFile(File pepXMLFile) {
-		this.pepXMLFile = pepXMLFile;
-	}
-	/**
 	 * @return the conversionProgramInfo
 	 */
 	public ConversionProgramInfo getConversionProgramInfo() {
@@ -83,18 +59,6 @@ public class ConversionParameters {
 		this.conversionProgramInfo = conversionProgramInfo;
 	}
 	
-	/**
-	 * @return the percolatorXMLFile
-	 */
-	public File getPercolatorXMLFile() {
-		return percolatorXMLFile;
-	}
-	/**
-	 * @param percolatorXMLFile the percolatorXMLFile to set
-	 */
-	public void setPercolatorXMLFile(File percolatorXMLFile) {
-		this.percolatorXMLFile = percolatorXMLFile;
-	}
 
 	public File getCruxOutputDirectory() {
 		return cruxOutputDirectory;
@@ -106,9 +70,6 @@ public class ConversionParameters {
 
 	private File fastaFile;
 	private File cometParametersFile;
-	private File limelightXMLOutputFile;
-	private File pepXMLFile;
-	private File percolatorXMLFile;
 	private File cruxOutputDirectory;
 	private ConversionProgramInfo conversionProgramInfo;
 	
