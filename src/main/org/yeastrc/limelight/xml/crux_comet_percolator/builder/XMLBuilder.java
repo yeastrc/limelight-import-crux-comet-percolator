@@ -196,7 +196,14 @@ public class XMLBuilder {
 		
 		// iterate over each distinct reported peptide
 		for( String percolatorReportedPeptide : percolatorResults.getIndexedReportedPeptideResults().keySet() ) {
-			
+
+			// There are no percolator data for this peptide in this file index
+			IndexedPercolatorPeptideData indexedPercolatorPeptideData = percolatorResults.getIndexedReportedPeptideResults().get( percolatorReportedPeptide );
+			if( !indexedPercolatorPeptideData.getPercolatorPSMs().containsKey( fileIndex ) ) {
+				continue;
+			}
+
+
 			CometReportedPeptide cometReportedPeptide = CometParsingUtils.getCometReportedPeptideForString( percolatorReportedPeptide, cometResults );
 			
 			ReportedPeptide xmlReportedPeptide = new ReportedPeptide();
@@ -219,8 +226,6 @@ public class XMLBuilder {
 				xProteinForPeptide.setId( BigInteger.valueOf( matchedProteinId ) );
 			}
 
-			IndexedPercolatorPeptideData indexedPercolatorPeptideData = percolatorResults.getIndexedReportedPeptideResults().get( percolatorReportedPeptide );
-			
 			// add in the filterable peptide annotations (e.g., q-value)
 			ReportedPeptideAnnotations xmlReportedPeptideAnnotations = new ReportedPeptideAnnotations();
 			xmlReportedPeptide.setReportedPeptideAnnotations( xmlReportedPeptideAnnotations );
