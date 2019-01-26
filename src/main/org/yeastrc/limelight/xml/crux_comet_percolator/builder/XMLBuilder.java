@@ -437,7 +437,7 @@ public class XMLBuilder {
 
 	private static File getLimelightXMLFile(CruxOutputParameters cruxOutputParameters, Integer fileIndex ) {
 
-		return new File( cruxOutputParameters.getCruxOutputDirectory(), cruxOutputParameters.getCruxFileIndexMap().get( fileIndex ) + ".limelight.xml" );
+		return new File(cruxOutputParameters.getCruxFileIndexMap().get( fileIndex ) + ".limelight.xml" );
 
 	}
 	
