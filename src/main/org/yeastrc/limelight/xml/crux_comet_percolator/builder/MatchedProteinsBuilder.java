@@ -228,6 +228,16 @@ public class MatchedProteinsBuilder {
 		return false;
 	}
 
+	private String cleanProteinSequence( String proteinSequence ) {
+
+		// chop off trailing asterisk (stop codons)
+		if( proteinSequence.endsWith( "*" ) ) {
+			return proteinSequence.substring(0, proteinSequence.length() - 1);
+		}
+
+		return proteinSequence;
+	}
+
 
 	/**
 	 * Get a mapping of protein sequence to the id to use for that sequence (in the MatchedProteins section) and
@@ -268,6 +278,7 @@ public class MatchedProteinsBuilder {
 					if( fastaEntryContainProteinName( proteinName, entry ) ) {
 
 						String sequence = entry.getSequence();
+						sequence = cleanProteinSequence( sequence );
 
 						MatchedProteinInformation mpi = null;
 						Collection<FastaProteinAnnotation> fastaAnnotations = null;
