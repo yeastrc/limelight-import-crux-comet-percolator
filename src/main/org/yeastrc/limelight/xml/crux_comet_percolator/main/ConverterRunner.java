@@ -66,7 +66,16 @@ public class ConverterRunner {
 			System.err.println( " Done." );
 
 			System.err.print( "\tWriting out XML..." );
-			(new XMLBuilder()).buildAndSaveXML( conversionParameters, cometResults, percResults, cometParams, cruxOutputParams, fileIndex );
+			(new XMLBuilder()).buildAndSaveXML(
+					conversionParameters,
+					cometResults,
+					percResults,
+					cometParams,
+					cruxOutputParams,
+					pepXMLFile.getName(),
+					fileIndex
+			);
+
 			System.err.println( " Done." );
 		}
 

@@ -30,6 +30,7 @@ public class XMLBuilder {
 			                     IndexedPercolatorResults percolatorResults,
 			                     CometParameters cometParameters,
 								 CruxOutputParameters cruxOutputParams,
+								 String pepXMLFileName,
 								 Integer fileIndex)
     throws Exception {
 
@@ -37,7 +38,7 @@ public class XMLBuilder {
 		LimelightInput limelightInputRoot = new LimelightInput();
 
 		limelightInputRoot.setFastaFilename( conversionParameters.getFastaFile().getName() );
-		
+		limelightInputRoot.setName( pepXMLFileName );
 		// add in the conversion program (this program) information
 		ConversionProgramBuilder.createInstance().buildConversionProgramSection( limelightInputRoot, conversionParameters);
 		
