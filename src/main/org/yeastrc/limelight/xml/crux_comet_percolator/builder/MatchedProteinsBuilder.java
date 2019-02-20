@@ -268,6 +268,10 @@ public class MatchedProteinsBuilder {
 
 				System.err.print( "\t\tTested " + count + " FASTA entries...\r" );
 
+
+				String sequence = entry.getSequence();
+				sequence = cleanProteinSequence( sequence );
+
 				for( String proteinName : proteinNames ) {
 
 					// if we've already added an entry using this protein name, there shouldn't be any others
@@ -276,9 +280,6 @@ public class MatchedProteinsBuilder {
 					}
 
 					if( fastaEntryContainProteinName( proteinName, entry ) ) {
-
-						String sequence = entry.getSequence();
-						sequence = cleanProteinSequence( sequence );
 
 						MatchedProteinInformation mpi = null;
 						Collection<FastaProteinAnnotation> fastaAnnotations = null;
