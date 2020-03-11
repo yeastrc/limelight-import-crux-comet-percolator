@@ -23,7 +23,7 @@ Example: java -jar cruxCometPercolator2LimelightXML.jar
 Options:
 ```
   -c	[Required] Path to comet .params file
-	-f	[Required] Path to FASTA file used in the experiment.
-	-d	[Required] Path to the output directory for Crux (contains pepXML files) and
+  -f	[Required] Path to FASTA file used in the experiment.
+  -d	[Required] Path to the output directory for Crux (contains pepXML files) and
 	    crux-output-xml directory.
 ```
