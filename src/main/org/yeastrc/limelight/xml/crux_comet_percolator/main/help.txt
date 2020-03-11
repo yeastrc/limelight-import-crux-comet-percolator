@@ -3,7 +3,7 @@ Description: Convert the results of a Crux Comet+Percolator analysis into limeli
 
 Usage: java -jar cruxCometPercolator2LimelightXML.jar -c path -d path -f path
 
-Example: java -jar cometPercolator2LimelightXML.jar
+Example: java -jar cruxCometPercolator2LimelightXML.jar
                                        -c /path/to/comet.params
                                        -f /path/to/fasta.fa
                                        -d /path/to/crux-output-directory
