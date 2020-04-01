@@ -35,18 +35,6 @@ public class ConversionParameters {
 		this.fastaFile = fastaFile;
 	}
 	/**
-	 * @return the cometParametersFile
-	 */
-	public File getCometParametersFile() {
-		return cometParametersFile;
-	}
-	/**
-	 * @param cometParametersFile the cometParametersFile to set
-	 */
-	public void setCometParametersFile(File cometParametersFile) {
-		this.cometParametersFile = cometParametersFile;
-	}
-	/**
 	 * @return the conversionProgramInfo
 	 */
 	public ConversionProgramInfo getConversionProgramInfo() {
@@ -58,7 +46,22 @@ public class ConversionParameters {
 	public void setConversionProgramInfo(ConversionProgramInfo conversionProgramInfo) {
 		this.conversionProgramInfo = conversionProgramInfo;
 	}
-	
+
+	public File getOutputFile() {
+		return outputFile;
+	}
+
+	public void setOutputFile(File outputFile) {
+		this.outputFile = outputFile;
+	}
+
+	public File getPepxmlDirectory() {
+		return pepxmlDirectory;
+	}
+
+	public void setPepxmlDirectory(File pepxmlDirectory) {
+		this.pepxmlDirectory = pepxmlDirectory;
+	}
 
 	public File getCruxOutputDirectory() {
 		return cruxOutputDirectory;
@@ -69,8 +72,9 @@ public class ConversionParameters {
 	}
 
 	private File fastaFile;
-	private File cometParametersFile;
 	private File cruxOutputDirectory;
+	private File pepxmlDirectory;
+	private File outputFile;
 	private ConversionProgramInfo conversionProgramInfo;
 	
 }

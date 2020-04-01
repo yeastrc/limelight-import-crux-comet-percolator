@@ -12,9 +12,10 @@ import org.yeastrc.limelight.limelight_import.api.xml_dto.MatchedProtein;
 import org.yeastrc.limelight.limelight_import.api.xml_dto.MatchedProteinLabel;
 import org.yeastrc.limelight.limelight_import.api.xml_dto.MatchedProteins;
 import org.yeastrc.limelight.xml.crux_comet_percolator.objects.CometReportedPeptide;
-import org.yeastrc.fasta.FASTAEntry;
-import org.yeastrc.fasta.FASTAHeader;
-import org.yeastrc.fasta.FASTAReader;
+import org.yeastrc.proteomics.fasta.FASTAEntry;
+import org.yeastrc.proteomics.fasta.FASTAFileParser;
+import org.yeastrc.proteomics.fasta.FASTAFileParserFactory;
+import org.yeastrc.proteomics.fasta.FASTAHeader;
 
 
 /**
@@ -252,17 +253,15 @@ public class MatchedProteinsBuilder {
 
 		Map<String, MatchedProteinInformation> proteinAnnotations = new HashMap<>();
 
-		FASTAReader fastaReader = null;
+		try ( FASTAFileParser parser = FASTAFileParserFactory.getInstance().getFASTAFileParser(  fastaFile ) ) {
 
-		try {
 
-			fastaReader = FASTAReader.getInstance( fastaFile );
 			int count = 0;
 			Collection<String> addedProteins = new HashSet<>();
 
 			System.err.println( "" );
 
-			for( FASTAEntry entry = fastaReader.readNext(); entry != null; entry = fastaReader.readNext() ) {
+			for (FASTAEntry entry = parser.getNextEntry(); entry != null; entry = parser.getNextEntry() ) {
 
 				count++;
 
@@ -322,11 +321,6 @@ public class MatchedProteinsBuilder {
 
 			System.err.print( "\n" );
 
-
-		} finally {
-			if( fastaReader != null ) {
-				fastaReader.close();
-			}
 		}
 
 		return proteinAnnotations;
