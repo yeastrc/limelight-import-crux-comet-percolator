@@ -21,6 +21,7 @@ package org.yeastrc.limelight.xml.crux_comet_percolator.main;
 import org.yeastrc.limelight.xml.crux_comet_percolator.builder.XMLBuilder;
 import org.yeastrc.limelight.xml.crux_comet_percolator.objects.*;
 import org.yeastrc.limelight.xml.crux_comet_percolator.reader.*;
+import org.yeastrc.limelight.xml.crux_comet_percolator.utils.CruxUtils;
 
 import java.io.File;
 
@@ -37,7 +38,7 @@ public class ConverterRunner {
 		System.err.println( " Done." );
 
 		System.err.print( "Reading comet params into memory..." );
-		CometParameters cometParams = CometParamsReader.getCometParameters( conversionParameters.getCometParametersFile() );
+		CometParameters cometParams = CometParamsReader.getCometParameters(CruxUtils.getCometParams(conversionParameters.getCruxOutputDirectory()));
 		System.err.println( " Done." );
 		
 		System.err.print( "Reading Percolator XML data into memory..." );
