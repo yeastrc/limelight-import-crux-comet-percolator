@@ -18,13 +18,17 @@
 
 package org.yeastrc.limelight.xml.crux_comet_percolator.main;
 
+import org.apache.commons.io.FilenameUtils;
 import org.yeastrc.limelight.xml.crux_comet_percolator.builder.XMLBuilder;
 import org.yeastrc.limelight.xml.crux_comet_percolator.objects.*;
 import org.yeastrc.limelight.xml.crux_comet_percolator.reader.*;
 import org.yeastrc.limelight.xml.crux_comet_percolator.utils.CruxUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConverterRunner {
 
@@ -59,16 +63,18 @@ public class ConverterRunner {
 		System.err.print( " Got " + percResults.getIndexedReportedPeptideResults().size() + " peptides. " );
 		System.err.println( " Done." );
 
-		// process each pepXML file separately
-		for( Integer fileIndex : cruxOutputParams.getCruxFileIndexMap().keySet() ) {
+		Map<String, CometResults> indexedCometResults = new HashMap<>();
 
-			String pepXMLFileName = cruxOutputParams.getCruxFileIndexMap().get( fileIndex );
-			File pepXMLFile = new File( conversionParameters.getCruxOutputDirectory(), pepXMLFileName );
+		// process each pepXML file separately
+		for( File pepXMLFile : pepXMLFiles ) {
+
+			String pepXMLFileName = pepXMLFile.getName();
+			String pepXMLFileNameRoot = FilenameUtils.removeExtension(pepXMLFileName);
 
 			System.err.println( "\nProcess pepXML file: " + pepXMLFileName );
 
 			if( !pepXMLFile.exists() ) {
-				throw new Exception( "Could not find pepXML file: " + pepXMLFile.getAbsolutePath() );
+				throw new FileNotFoundException( "Could not find pepXML file: " + pepXMLFile.getAbsolutePath() );
 			}
 
 			System.err.print( "\tReading Comet pepXML data into memory..." );
@@ -76,22 +82,22 @@ public class ConverterRunner {
 			System.err.println( " Done." );
 
 			System.err.print( "\tVerifying all percolator results have comet results..." );
-			CometPercolatorValidator.validateData( cometResults, percResults, fileIndex );
+			CometPercolatorValidator.validateData( cometResults, percResults, pepXMLFileNameRoot );
 			System.err.println( " Done." );
 
-			System.err.print( "\tWriting out XML..." );
-			(new XMLBuilder()).buildAndSaveXML(
-					conversionParameters,
-					cometResults,
-					percResults,
-					cometParams,
-					cruxOutputParams,
-					pepXMLFile.getName(),
-					fileIndex
-			);
-
-			System.err.println( " Done." );
+			indexedCometResults.put(pepXMLFileNameRoot, cometResults);
 		}
+
+		System.err.print( "\tWriting out XML..." );
+		(new XMLBuilder()).buildAndSaveXML(
+				conversionParameters,
+				cometResults,
+				percResults,
+				cometParams,
+				cruxOutputParams,
+				pepXMLFile.getName(),
+				fileIndex
+		);
 
 	}
 }

@@ -38,6 +38,7 @@ dependencies {
     compile 'info.picocli:picocli:4.0.0-alpha-1'
     compile 'org.yeastrc:yrc-pepxml-jaxb:1.22.2'
     compile 'org.yeastrc:yrc-percolator-utils:1.0.0'
+    compile 'commons-io:commons-io:2.6'
 }
 
 processResources {
