@@ -55,14 +55,6 @@ public class ConversionParameters {
 		this.outputFile = outputFile;
 	}
 
-	public File getPepxmlDirectory() {
-		return pepxmlDirectory;
-	}
-
-	public void setPepxmlDirectory(File pepxmlDirectory) {
-		this.pepxmlDirectory = pepxmlDirectory;
-	}
-
 	public File getCruxOutputDirectory() {
 		return cruxOutputDirectory;
 	}
@@ -73,7 +65,6 @@ public class ConversionParameters {
 
 	private File fastaFile;
 	private File cruxOutputDirectory;
-	private File pepxmlDirectory;
 	private File outputFile;
 	private ConversionProgramInfo conversionProgramInfo;
 	

@@ -24,6 +24,7 @@ import org.yeastrc.limelight.xml.crux_comet_percolator.reader.*;
 import org.yeastrc.limelight.xml.crux_comet_percolator.utils.CruxUtils;
 
 import java.io.File;
+import java.util.Collection;
 
 public class ConverterRunner {
 
@@ -33,11 +34,23 @@ public class ConverterRunner {
 	
 	public void convertCruxCometPercolatorToLimelightXML(ConversionParameters conversionParameters ) throws Throwable {
 
-		System.err.print( "Determining location of Crux output files..." );
-		CruxOutputParameters cruxOutputParams = CruxDirectoryReader.processCruxDirectory( conversionParameters.getCruxOutputDirectory() );
-		System.err.println( " Done." );
+		System.err.print( "Finding pepXML files..." );
+		Collection<File> pepXMLFiles = CruxUtils.getPepXMLFiles(conversionParameters.getCruxOutputDirectory());
+		System.err.println( " Found " + pepXMLFiles.size() + " file(s)." );
 
-		System.err.print( "Reading comet params into memory..." );
+		System.err.print( "Finding percolator output file..." );
+		File percoutFile = CruxUtils.getPercolatorOutputFile(conversionParameters.getCruxOutputDirectory());
+		System.err.println( " Found " + pepXMLFiles.size() + " file(s)." );
+
+		System.err.println( "Determining versions for pipeline..." );
+		String cruxVersion = CruxUtils.getCruxVersion(conversionParameters.getCruxOutputDirectory());
+		String cometVersion = CruxUtils.getCometVersion(conversionParameters.getCruxOutputDirectory());
+		String percVersion = CruxUtils.getPercolatorVersion(conversionParameters.getCruxOutputDirectory());
+		System.err.println( "\tCrux version: " + cruxVersion );
+		System.err.println( "\tComet version: " + cometVersion );
+		System.err.println( "\tPercolator version: " + percVersion );
+
+		System.err.print( "Reading comet params..." );
 		CometParameters cometParams = CometParamsReader.getCometParameters(CruxUtils.getCometParams(conversionParameters.getCruxOutputDirectory()));
 		System.err.println( " Done." );
 		

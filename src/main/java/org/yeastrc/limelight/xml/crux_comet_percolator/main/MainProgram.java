@@ -52,9 +52,6 @@ public class MainProgram implements Runnable{
 	@CommandLine.Option(names = { "-f", "--fasta-file" }, required = true, description = "Full path to FASTA file used in the experiment. E.g., /data/yeast.fa")
 	private File fastaFile;
 
-	@CommandLine.Option(names = { "-p", "--pepxml-dir" }, required = true, description = "Full path to the directory containing the pepXML files (comet output). E.g. /data/my_analysis")
-	private File pepxmlDirectory;
-
 	@CommandLine.Option(names = { "-o", "--out-file" }, required = true, description = "Full path to use for the Limelight XML output file. E.g., /data/my_analysis/crux.limelight.xml")
 	private File outFile;
 
@@ -77,18 +74,12 @@ public class MainProgram implements Runnable{
 			System.exit( 1 );
 		}
 
-		if( !pepxmlDirectory.exists() ) {
-			System.err.println( "Could not find pepxml data directory: " + pepxmlDirectory );
-			System.exit( 1 );
-		}
-
 		ConversionProgramInfo cpi = ConversionProgramInfo.createInstance( String.join( " ",  args ) );        
 
 		ConversionParameters cp = new ConversionParameters();
 		cp.setConversionProgramInfo( cpi );
 		cp.setFastaFile( fastaFile );
 		cp.setCruxOutputDirectory( cruxOutputDirectory );
-		cp.setPepxmlDirectory(pepxmlDirectory);
 		cp.setOutputFile(outFile);
 
 		try {
