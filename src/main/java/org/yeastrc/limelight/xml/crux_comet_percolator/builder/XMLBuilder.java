@@ -6,7 +6,9 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.yeastrc.limelight.limelight_import.api.xml_dto.*;
 import org.yeastrc.limelight.limelight_import.api.xml_dto.ReportedPeptide.ReportedPeptideAnnotations;
@@ -180,12 +182,16 @@ public class XMLBuilder {
 		//
 		// Build MatchedProteins section and get map of protein names to MatchedProtein ids
 		//
+		Set<CometReportedPeptide> allCometReportedPeptides = new HashSet<>();
+		for(CometResults cr : indexedCometResults.values()) {
+			allCometReportedPeptides.addAll(cr.getPeptidePSMMap().keySet());
+		}
+
 		Map<String, Integer> proteinNameIds = MatchedProteinsBuilder.getInstance().buildMatchedProteins(
 				limelightInputRoot,
 				conversionParameters.getFastaFile(),
-				cometResults.getPeptidePSMMap().keySet()
+				allCometReportedPeptides
 		);
-
 
 		//
 		// Define the peptide and PSM data
@@ -196,14 +202,9 @@ public class XMLBuilder {
 		// iterate over each distinct reported peptide
 		for( String percolatorReportedPeptide : percolatorResults.getIndexedReportedPeptideResults().keySet() ) {
 
-			// There are no percolator data for this peptide in this file index
 			IndexedPercolatorPeptideData indexedPercolatorPeptideData = percolatorResults.getIndexedReportedPeptideResults().get( percolatorReportedPeptide );
-			if( !indexedPercolatorPeptideData.getPercolatorPSMs().containsKey( fileIndex ) ) {
-				continue;
-			}
 
-
-			CometReportedPeptide cometReportedPeptide = CometParsingUtils.getCometReportedPeptideForString( percolatorReportedPeptide, cometResults );
+			CometReportedPeptide cometReportedPeptide = CometParsingUtils.getCometReportedPeptideForString( percolatorReportedPeptide, allCometReportedPeptides );
 			
 			ReportedPeptide xmlReportedPeptide = new ReportedPeptide();
 			reportedPeptides.getReportedPeptide().add( xmlReportedPeptide );

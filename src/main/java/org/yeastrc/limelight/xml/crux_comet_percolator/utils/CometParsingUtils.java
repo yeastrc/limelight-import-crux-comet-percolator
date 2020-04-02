@@ -6,12 +6,13 @@ import org.yeastrc.limelight.xml.crux_comet_percolator.objects.CometReportedPept
 import org.yeastrc.limelight.xml.crux_comet_percolator.objects.CometResults;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 public class CometParsingUtils {
 	
-	public static CometReportedPeptide getCometReportedPeptideForString( String reportedPeptide, CometResults cometResults ) {
+	public static CometReportedPeptide getCometReportedPeptideForString( String reportedPeptide, Set<CometReportedPeptide> allCometReportedPeptides ) {
 		
-		for( CometReportedPeptide cometPeptide : cometResults.getPeptidePSMMap().keySet() ) {
+		for( CometReportedPeptide cometPeptide : allCometReportedPeptides ) {
 			if( cometPeptide.getReportedPeptideString().equals( reportedPeptide ) ) {
 				return cometPeptide;
 			}
