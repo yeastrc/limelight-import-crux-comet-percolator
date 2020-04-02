@@ -48,18 +48,17 @@ public class PercolatorParsingUtils {
 	 * @param scanId
 	 * @return
 	 */
-	public static int getFileIndexFromScanId( String scanId ) {
-
-		Pattern p1 = Pattern.compile( "^target_(\\d+)_\\d+_.+$" );
+	public static String getPepXMLFileName( String scanId ) {
 
 		Matcher m = p1.matcher( scanId );
 
 		if( m.matches() ) {
-			return Integer.parseInt( m.group( 1 ) );
+			return m.group( 1 );
 		}
 
-		throw new IllegalArgumentException( "Scan id is not of the expected syntax. Got: " + scanId + ", expected something like: target_17_15544_2_1" );
+		throw new IllegalArgumentException( "Scan id is not of the expected syntax. Got: " + scanId + ", expected something like: comet.2020_0212_Loomis_10_DDA_newLC_58146_3_1" );
 	}
 
+	private static final Pattern p1 = Pattern.compile( "^.*comet\\.(.+)_\\d+_\\d+_\\d+$" );
 
 }

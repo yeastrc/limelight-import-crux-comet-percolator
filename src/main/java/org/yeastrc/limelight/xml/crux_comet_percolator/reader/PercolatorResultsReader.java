@@ -47,9 +47,7 @@ public class PercolatorResultsReader {
 	public static IndexedPercolatorResults getPercolatorResults(File file ) throws Throwable {
 				
 		IPercolatorOutput po = getIPercolatorOutput( file );
-		
-		String version = getPercolatorVersion( po );
-		
+
 		Map<String, PercolatorPSM> psmIdPSMMap = getPercolatorPSMs( po );
 		Map<String, IndexedPercolatorPeptideData> percolatorPeptideData = getPercolatorPeptideData( po, psmIdPSMMap );
 		
@@ -57,7 +55,6 @@ public class PercolatorResultsReader {
 		po = null;
 		
 		IndexedPercolatorResults results = new IndexedPercolatorResults();
-		results.setPercolatorVersion( version );
 		results.setIndexedReportedPeptideResults( percolatorPeptideData );
 
 		return results;
@@ -84,7 +81,7 @@ public class PercolatorResultsReader {
 	    	if( resultsMap.containsKey( percolatorPeptide ) )
 	    		throw new Exception( "Found two instances of the same reported peptide: " + percolatorPeptide + " and " + resultsMap.get( percolatorPeptide ) );
 
-			Map<Integer, Map<Integer, PercolatorPSM>> psmsForPeptide = getPercolatorPSMsForPeptide( xpeptide, psmIdPSMMap );
+			Map<String, Map<Integer, PercolatorPSM>> psmsForPeptide = getPercolatorPSMsForPeptide( xpeptide, psmIdPSMMap );
 	    	
 	    	if( psmsForPeptide == null || psmsForPeptide.keySet().size() < 1 )
 	    		throw new Exception( "Found no PSMs for peptide: " + percolatorPeptide );
@@ -107,9 +104,9 @@ public class PercolatorResultsReader {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static Map<Integer, Map<Integer, PercolatorPSM>> getPercolatorPSMsForPeptide( IPeptide xpeptide, Map<String, PercolatorPSM> psmIdPSMMap ) throws Exception {
+	protected static Map<String, Map<Integer, PercolatorPSM>> getPercolatorPSMsForPeptide( IPeptide xpeptide, Map<String, PercolatorPSM> psmIdPSMMap ) throws Exception {
 
-		Map<Integer, Map<Integer, PercolatorPSM>> psmsForPeptide = new HashMap<>();
+		Map<String, Map<Integer, PercolatorPSM>> psmsForPeptide = new HashMap<>();
 		
 		for( String psmId : xpeptide.getPsmIds().getPsmId() ) {
 			
@@ -127,7 +124,7 @@ public class PercolatorResultsReader {
 
 			Map scanNumberMap = new HashMap<>();
 			scanNumberMap.put( psm.getScanNumber(), psm );
-			psmsForPeptide.put( psm.getFileIndex(), scanNumberMap );
+			psmsForPeptide.put( psm.getPepXMLFile(), scanNumberMap );
 		}
 		
 		return psmsForPeptide;
@@ -191,35 +188,10 @@ public class PercolatorResultsReader {
 		psm.setqValue( Double.valueOf( xpsm.getQValue() ) );
 		psm.setReportedPeptide( xpsm.getPeptideSeq().getSeq() );
 		psm.setScanNumber( PercolatorParsingUtils.getScanNumberFromScanId( xpsm.getPsmId() ) );
-		psm.setFileIndex( PercolatorParsingUtils.getFileIndexFromScanId( xpsm.getPsmId() ) );
+		psm.setPepXMLFile( PercolatorParsingUtils.getPepXMLFileName( xpsm.getPsmId() ) );
 		psm.setSvmScore( Double.valueOf( xpsm.getSvmScore() ) );
 		
 		return psm;
-	}
-	
-
-	/**
-	 * Get the version of percolator used to generate the XML. If unable to determine
-	 * return "unknown"
-	 * 
-	 * @param po
-	 * @return
-	 */
-	protected static String getPercolatorVersion( IPercolatorOutput po ) {
-		
-		String version = null;
-		
-		try {
-			
-			version = po.getPercolatorVersion();
-			
-		} catch ( Exception e ) {
-			
-			version = "unknown";
-			
-		}
-		
-		return version;
 	}
 	
 	

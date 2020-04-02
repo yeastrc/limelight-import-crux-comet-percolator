@@ -19,16 +19,20 @@
 package org.yeastrc.limelight.xml.crux_comet_percolator.objects;
 
 public class PercolatorPSM {
-	
-	
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+
+
 	@Override
 	public String toString() {
-		return "PercolatorPSM [svmScore=" + svmScore + ", qValue=" + qValue + ", pValue=" + pValue + ", pep=" + pep
-				+ ", reportedPeptide=" + reportedPeptide + ", psmId=" + psmId + ", scanNumber=" + scanNumber + "]";
+		return "PercolatorPSM{" +
+				"svmScore=" + svmScore +
+				", qValue=" + qValue +
+				", pValue=" + pValue +
+				", pep=" + pep +
+				", reportedPeptide='" + reportedPeptide + '\'' +
+				", psmId='" + psmId + '\'' +
+				", scanNumber=" + scanNumber +
+				", pepXMLFile='" + pepXMLFile + '\'' +
+				'}';
 	}
 
 	/* (non-Javadoc)
@@ -141,12 +145,12 @@ public class PercolatorPSM {
 		return scanNumber;
 	}
 
-	public int getFileIndex() {
-		return fileIndex;
+	public String getPepXMLFile() {
+		return pepXMLFile;
 	}
 
-	public void setFileIndex(int fileIndex) {
-		this.fileIndex = fileIndex;
+	public void setPepXMLFile(String pepXMLFile) {
+		this.pepXMLFile = pepXMLFile;
 	}
 
 	/**
@@ -163,5 +167,5 @@ public class PercolatorPSM {
 	private String reportedPeptide;
 	private String psmId;
 	private int scanNumber;
-	private int fileIndex;
+	private String pepXMLFile;
 }

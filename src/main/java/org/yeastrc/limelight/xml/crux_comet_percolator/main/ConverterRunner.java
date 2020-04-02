@@ -55,7 +55,7 @@ public class ConverterRunner {
 		System.err.println( " Done." );
 		
 		System.err.print( "Reading Percolator XML data into memory..." );
-		IndexedPercolatorResults percResults = PercolatorResultsReader.getPercolatorResults( cruxOutputParams.getPercolatorOutputXMLFile() );
+		IndexedPercolatorResults percResults = PercolatorResultsReader.getPercolatorResults( percoutFile );
 		System.err.print( " Got " + percResults.getIndexedReportedPeptideResults().size() + " peptides. " );
 		System.err.println( " Done." );
 

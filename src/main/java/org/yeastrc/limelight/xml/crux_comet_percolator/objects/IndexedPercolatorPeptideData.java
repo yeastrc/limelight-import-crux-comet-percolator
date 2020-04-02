@@ -9,7 +9,7 @@ public class IndexedPercolatorPeptideData {
 	/**
 	 * The percolator PSMs. First keyed by file index, then by scan number
 	 */
-	private Map<Integer, Map<Integer,PercolatorPSM>> percolatorPSMs;
+	private Map<String, Map<Integer,PercolatorPSM>> percolatorPSMs;
 	
 	/**
 	 * @return the percolatorPeptideScores
@@ -29,7 +29,7 @@ public class IndexedPercolatorPeptideData {
 	 * Get the percolator PSMs. First keyed by file index, then by scan number
 	 * @return
 	 */
-	public Map<Integer, Map<Integer, PercolatorPSM>> getPercolatorPSMs() {
+	public Map<String, Map<Integer, PercolatorPSM>> getPercolatorPSMs() {
 		return percolatorPSMs;
 	}
 
@@ -37,7 +37,7 @@ public class IndexedPercolatorPeptideData {
 	 * Set the percolator PSMs. First keyed by file index, then by scan number
 	 * @param percolatorPSMs
 	 */
-	public void setPercolatorPSMs(Map<Integer, Map<Integer, PercolatorPSM>> percolatorPSMs) {
+	public void setPercolatorPSMs(Map<String, Map<Integer, PercolatorPSM>> percolatorPSMs) {
 		this.percolatorPSMs = percolatorPSMs;
 	}
 }

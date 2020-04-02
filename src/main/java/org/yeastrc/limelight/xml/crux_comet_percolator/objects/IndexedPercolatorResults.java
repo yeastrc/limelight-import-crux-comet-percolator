@@ -25,19 +25,6 @@ import java.util.Map;
  */
 public class IndexedPercolatorResults {
 
-	/**
-	 * @return the percolatorVersion
-	 */
-	public String getPercolatorVersion() {
-		return percolatorVersion;
-	}
-	/**
-	 * @param percolatorVersion the percolatorVersion to set
-	 */
-	public void setPercolatorVersion(String percolatorVersion) {
-		this.percolatorVersion = percolatorVersion;
-	}
-
 	public Map<String, IndexedPercolatorPeptideData> getIndexedReportedPeptideResults() {
 		return indexedReportedPeptideResults;
 	}
@@ -50,7 +37,5 @@ public class IndexedPercolatorResults {
 	 * Percolator results,
 	 */
 	private Map<String, IndexedPercolatorPeptideData> indexedReportedPeptideResults;
-
-	private String percolatorVersion;
 
 }

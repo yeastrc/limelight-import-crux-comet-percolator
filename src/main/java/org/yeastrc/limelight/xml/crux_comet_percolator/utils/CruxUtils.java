@@ -117,7 +117,7 @@ public class CruxUtils {
 
         Pattern p = Pattern.compile("^INFO:  Comet version \"(.+)\".*$");
 
-        try (BufferedReader br = new BufferedReader( new FileReader( percLogFile ) ) ) {
+        try (BufferedReader br = new BufferedReader( new FileReader( cometLogFile ) ) ) {
             for ( String line = br.readLine(); line != null; line = br.readLine() ) {
                 if(line.startsWith("INFO:  Comet version")) {
                     Matcher m = p.matcher( line );
