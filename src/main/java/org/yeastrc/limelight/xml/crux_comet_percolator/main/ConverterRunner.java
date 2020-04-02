@@ -91,13 +91,14 @@ public class ConverterRunner {
 		System.err.print( "\tWriting out XML..." );
 		(new XMLBuilder()).buildAndSaveXML(
 				conversionParameters,
-				cometResults,
-				percResults,
 				cometParams,
-				cruxOutputParams,
-				pepXMLFile.getName(),
-				fileIndex
+				indexedCometResults,
+				percResults,
+				cruxVersion,
+				cometVersion,
+				percVersion
 		);
+		System.err.println(" Done.");
 
 	}
 }

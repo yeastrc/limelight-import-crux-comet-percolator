@@ -26,20 +26,18 @@ import org.yeastrc.limelight.xml.crux_comet_percolator.utils.CometParsingUtils;
 public class XMLBuilder {
 
 	public void buildAndSaveXML( ConversionParameters conversionParameters,
-			                     CometResults cometResults,
-			                     IndexedPercolatorResults percolatorResults,
 			                     CometParameters cometParameters,
-								 CruxOutputParameters cruxOutputParams,
-								 String pepXMLFileName,
-								 Integer fileIndex)
+			                     Map<String, CometResults> indexedCometResults,
+			                     IndexedPercolatorResults percolatorResults,
+			                     String cruxVersion,
+								 String cometVersion,
+								 String percolatorVersion)
     throws Exception {
 
 
 		LimelightInput limelightInputRoot = new LimelightInput();
 
 		limelightInputRoot.setFastaFilename( conversionParameters.getFastaFile().getName() );
-		limelightInputRoot.setName( pepXMLFileName );
-		// add in the conversion program (this program) information
 		ConversionProgramBuilder.createInstance().buildConversionProgramSection( limelightInputRoot, conversionParameters);
 		
 		SearchProgramInfo searchProgramInfo = new SearchProgramInfo();
@@ -54,7 +52,7 @@ public class XMLBuilder {
 
 			searchProgram.setName( Constants.PROGRAM_NAME_CRUX );
 			searchProgram.setDisplayName( Constants.PROGRAM_NAME_CRUX );
-			searchProgram.setVersion( cruxOutputParams.getCruxVersion() );
+			searchProgram.setVersion( cruxVersion );
 
 
 		}
@@ -65,7 +63,7 @@ public class XMLBuilder {
 				
 			searchProgram.setName( Constants.PROGRAM_NAME_COMET );
 			searchProgram.setDisplayName( Constants.PROGRAM_NAME_COMET );
-			searchProgram.setVersion( cometResults.getCometVersion() );
+			searchProgram.setVersion( cometVersion);
 			
 			
 			//
@@ -89,7 +87,7 @@ public class XMLBuilder {
 				
 			searchProgram.setName( Constants.PROGRAM_NAME_PERCOLATOR );
 			searchProgram.setDisplayName( Constants.PROGRAM_NAME_PERCOLATOR );
-			searchProgram.setVersion( percolatorResults.getPercolatorVersion() );
+			searchProgram.setVersion( percolatorVersion);
 			
 			
 			//
