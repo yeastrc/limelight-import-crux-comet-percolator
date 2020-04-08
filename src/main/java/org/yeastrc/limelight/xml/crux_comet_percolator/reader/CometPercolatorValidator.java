@@ -43,7 +43,7 @@ public class CometPercolatorValidator {
 			for( int scanNumber : indexedPercolatorPeptideData.getPercolatorPSMs().get( pepXMLFileRoot ).keySet() ) {
 
 				if( !cometResults.getPeptidePSMMap().get( cometReportedPeptide ).containsKey( scanNumber ) ) {
-					throw new Exception( "Error: Could not find PSM data for scan number " + scanNumber + " in percolator results for peptide: " + percolatorReportedPeptide );
+					throw new Exception( "Error: Could not find PSM data for scan number " + scanNumber + " in comet results for peptide: " + percolatorReportedPeptide );
 				}
 			}
 
