@@ -31,10 +31,14 @@ public class PercolatorParsingUtils {
 	 */
 	public static int getScanNumberFromScanId( String scanId ) {
 
-		Matcher m = scanNumberPattern.matcher( scanId );
+		Matcher m = scanNumberPattern_MultiSearch.matcher( scanId );
 
 		if( m.matches() ) {
-			System.out.println("Got scan number " + m.group( 1 ) + " for " + scanId);
+			return Integer.parseInt( m.group( 1 ) );
+		}
+
+		m = scanNumberPattern_SingleSearch.matcher(scanId);
+		if( m.matches() ) {
 			return Integer.parseInt( m.group( 1 ) );
 		}
 
@@ -49,17 +53,24 @@ public class PercolatorParsingUtils {
 	 */
 	public static String getPepXMLFileName( String scanId ) {
 
-		Matcher m = filenamePattern.matcher( scanId );
+		Matcher m = filenamePattern_MultiSearch.matcher( scanId );
 
 		if( m.matches() ) {
 			return "comet." + m.group( 1 );
 		}
 
+		m = filenamePattern_SingleSearch.matcher( scanId );
+		if( m.matches() ) {
+			return "comet";
+		}
+
 		throw new IllegalArgumentException( "Scan id is not of the expected syntax. Got: " + scanId + ", expected something like: comet.2020_0212_Loomis_10_DDA_newLC_58146_3_1" );
 	}
 
-	private static final Pattern filenamePattern = Pattern.compile( "^.*comet\\.(.+)_\\d+_\\d+_\\d+$" );
+	private static final Pattern filenamePattern_MultiSearch = Pattern.compile( "^.*comet\\.(.+)_\\d+_\\d+_\\d+$" );
+	private static final Pattern filenamePattern_SingleSearch = Pattern.compile( "^.*comet_\\d+_\\d+_\\d+$" );
 
-	private static final Pattern scanNumberPattern = Pattern.compile( "^.*comet\\..+_(\\d+)_\\d+_\\d+$" );
+	private static final Pattern scanNumberPattern_MultiSearch = Pattern.compile( "^.*comet\\..+_(\\d+)_\\d+_\\d+$" );
+	private static final Pattern scanNumberPattern_SingleSearch = Pattern.compile( "^.*comet_(\\d+)_\\d+_\\d+$" );
 
 }

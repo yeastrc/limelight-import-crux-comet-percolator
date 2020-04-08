@@ -20,6 +20,8 @@ public class CometPSM {
 	private int charge;
 	private BigDecimal retentionTime;
 
+	private String spectralFilename;
+
 	@Override
 	public String toString() {
 		return "CometPSM{" +
@@ -34,6 +36,7 @@ public class CometPSM {
 				", precursorNeutralMass=" + precursorNeutralMass +
 				", charge=" + charge +
 				", retentionTime=" + retentionTime +
+				", spectralFilename='" + spectralFilename + '\'' +
 				", peptideSequence='" + peptideSequence + '\'' +
 				", modifications=" + modifications +
 				", fdr=" + fdr +
@@ -225,6 +228,12 @@ public class CometPSM {
 	public void setFdr(BigDecimal fdr) {
 		this.fdr = fdr;
 	}
-	
-	
+
+	public String getSpectralFilename() {
+		return spectralFilename;
+	}
+
+	public void setSpectralFilename(String spectralFilename) {
+		this.spectralFilename = spectralFilename;
+	}
 }

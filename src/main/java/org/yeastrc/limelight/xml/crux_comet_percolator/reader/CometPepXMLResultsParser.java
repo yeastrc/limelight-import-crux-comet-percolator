@@ -63,6 +63,9 @@ public class CometPepXMLResultsParser {
 		
 		
 		for( MsmsRunSummary runSummary : msAnalysis.getMsmsRunSummary() ) {
+
+			String spectralFilename = (new File(runSummary.getBaseName())).getName() + runSummary.getRawData();
+
 			for( SpectrumQuery spectrumQuery : runSummary.getSpectrumQuery() ) {
 				
 				int charge = CometPepXMLParsingUtils.getChargeFromSpectrumQuery( spectrumQuery );
@@ -83,6 +86,7 @@ public class CometPepXMLResultsParser {
 						try {
 							
 							psm = CometPepXMLParsingUtils.getPsmFromSearchHit( searchHit, charge, scanNumber, neutralMass, retentionTime, cometParams  );
+							psm.setSpectralFilename(spectralFilename);
 							
 						} catch( Throwable t) {
 							

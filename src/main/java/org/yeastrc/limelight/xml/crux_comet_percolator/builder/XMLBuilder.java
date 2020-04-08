@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -188,6 +189,11 @@ public class XMLBuilder {
 			allCometReportedPeptides.addAll(cr.getPeptidePSMMap().keySet());
 		}
 
+		Map<String, CometReportedPeptide> cometRPLookupMap = new HashMap<>();
+		for(CometReportedPeptide cp : allCometReportedPeptides) {
+			cometRPLookupMap.put(cp.getReportedPeptideString(), cp);
+		}
+
 		Map<String, Integer> proteinNameIds = MatchedProteinsBuilder.getInstance().buildMatchedProteins(
 				limelightInputRoot,
 				conversionParameters.getFastaFile(),
@@ -205,7 +211,7 @@ public class XMLBuilder {
 
 			IndexedPercolatorPeptideData indexedPercolatorPeptideData = percolatorResults.getIndexedReportedPeptideResults().get( percolatorReportedPeptide );
 
-			CometReportedPeptide cometReportedPeptide = CometParsingUtils.getCometReportedPeptideForString( percolatorReportedPeptide, allCometReportedPeptides );
+			CometReportedPeptide cometReportedPeptide = cometRPLookupMap.get(percolatorReportedPeptide);
 			
 			ReportedPeptide xmlReportedPeptide = new ReportedPeptide();
 			reportedPeptides.getReportedPeptide().add( xmlReportedPeptide );
@@ -316,10 +322,10 @@ public class XMLBuilder {
 
 			for( String pepXMLFileRoot : percolatorResults.getIndexedReportedPeptideResults().get(percolatorReportedPeptide).getPercolatorPSMs().keySet()) {
 
-				System.out.println("pepXMLFileRoot: " + pepXMLFileRoot);
-				for(String p : indexedCometResults.keySet()) {
-					System.out.println(p);
-				}
+//				System.out.println("pepXMLFileRoot: " + pepXMLFileRoot);
+//				for(String p : indexedCometResults.keySet()) {
+//					System.out.println(p);
+//				}
 
 				Map<Integer, PercolatorPSM> percolatorPSMData = percolatorResults.getIndexedReportedPeptideResults().get(percolatorReportedPeptide).getPercolatorPSMs().get(pepXMLFileRoot);
 
@@ -337,6 +343,7 @@ public class XMLBuilder {
 
 					xmlPsm.setScanNumber(new BigInteger(String.valueOf(scanNumber)));
 					xmlPsm.setPrecursorCharge(new BigInteger(String.valueOf(psm.getCharge())));
+					xmlPsm.setScanFileName(psm.getSpectralFilename());
 
 					// add in the filterable PSM annotations (e.g., score)
 					FilterablePsmAnnotations xmlFilterablePsmAnnotations = new FilterablePsmAnnotations();
@@ -445,14 +452,35 @@ public class XMLBuilder {
 		// add in the config file(s)
 		ConfigurationFiles xmlConfigurationFiles = new ConfigurationFiles();
 		limelightInputRoot.setConfigurationFiles( xmlConfigurationFiles );
-		
-		ConfigurationFile xmlConfigurationFile = new ConfigurationFile();
-		xmlConfigurationFiles.getConfigurationFile().add( xmlConfigurationFile );
-		
-		xmlConfigurationFile.setSearchProgram( Constants.PROGRAM_NAME_COMET );
-		xmlConfigurationFile.setFileName(CruxUtils.getCometParams(conversionParameters.getCruxOutputDirectory()).getName() );
-		xmlConfigurationFile.setFileContent( Files.readAllBytes( FileSystems.getDefault().getPath( CruxUtils.getCometParams(conversionParameters.getCruxOutputDirectory()).getAbsolutePath() ) ) );
-		
+
+		{
+			ConfigurationFile xmlConfigurationFile = new ConfigurationFile();
+			xmlConfigurationFiles.getConfigurationFile().add(xmlConfigurationFile);
+
+			xmlConfigurationFile.setSearchProgram(Constants.PROGRAM_NAME_COMET);
+			xmlConfigurationFile.setFileName(CruxUtils.getCometParams(conversionParameters.getCruxOutputDirectory()).getName());
+			xmlConfigurationFile.setFileContent(Files.readAllBytes(FileSystems.getDefault().getPath(CruxUtils.getCometParams(conversionParameters.getCruxOutputDirectory()).getAbsolutePath())));
+		}
+
+		File f = CruxUtils.getCometLogFile(conversionParameters.getCruxOutputDirectory());
+		if( f.exists() ) {
+			ConfigurationFile xmlConfigurationFile = new ConfigurationFile();
+			xmlConfigurationFiles.getConfigurationFile().add(xmlConfigurationFile);
+
+			xmlConfigurationFile.setSearchProgram(Constants.PROGRAM_NAME_COMET);
+			xmlConfigurationFile.setFileName(f.getName());
+			xmlConfigurationFile.setFileContent(Files.readAllBytes(FileSystems.getDefault().getPath(f.getAbsolutePath())));
+		}
+
+		f = CruxUtils.getPercolatorLogFile(conversionParameters.getCruxOutputDirectory());
+		if( f.exists() ) {
+			ConfigurationFile xmlConfigurationFile = new ConfigurationFile();
+			xmlConfigurationFiles.getConfigurationFile().add(xmlConfigurationFile);
+
+			xmlConfigurationFile.setSearchProgram(Constants.PROGRAM_NAME_PERCOLATOR);
+			xmlConfigurationFile.setFileName(f.getName());
+			xmlConfigurationFile.setFileContent(Files.readAllBytes(FileSystems.getDefault().getPath(f.getAbsolutePath())));
+		}
 		
 		//make the xml file
 		CreateImportFileFromJavaObjectsMain.getInstance().createImportFileFromJavaObjectsMain( conversionParameters.getOutputFile(), limelightInputRoot);
