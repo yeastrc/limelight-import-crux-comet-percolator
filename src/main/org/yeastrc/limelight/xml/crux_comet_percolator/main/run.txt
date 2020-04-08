@@ -1,4 +1,0 @@
-Comet/Percolator to limelight XML converter
-Author: Michael Riffle <mriffle@uw.edu>
-See: {{URL}}
-Version: {{VERSION}}
