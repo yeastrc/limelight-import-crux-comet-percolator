@@ -54,7 +54,7 @@ jar {
 }
 
 shadowJar {
-    baseName = 'cruxCometPercolator2Limelight'
+    baseName = 'cruxCometPercolator2LimelightXML'
     classifier = null
     version = null
 }
