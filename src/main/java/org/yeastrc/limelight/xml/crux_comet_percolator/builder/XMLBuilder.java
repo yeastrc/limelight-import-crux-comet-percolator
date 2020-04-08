@@ -24,6 +24,7 @@ import org.yeastrc.limelight.xml.crux_comet_percolator.annotation.PeptideDefault
 import org.yeastrc.limelight.xml.crux_comet_percolator.constants.Constants;
 import org.yeastrc.limelight.xml.crux_comet_percolator.objects.*;
 import org.yeastrc.limelight.xml.crux_comet_percolator.utils.CometParsingUtils;
+import org.yeastrc.limelight.xml.crux_comet_percolator.utils.CruxUtils;
 
 public class XMLBuilder {
 
@@ -216,14 +217,22 @@ public class XMLBuilder {
 			xmlReportedPeptide.setMatchedProteinsForPeptide( xProteinsForPeptide );
 
 			// add in protein inference info
+			boolean foundValidProtein = false;
+
 			for( String proteinName : cometReportedPeptide.getProteinMatches() ) {
 
-				int matchedProteinId = proteinNameIds.get( proteinName );
+				if(proteinNameIds.containsKey(proteinName)) {
+					int matchedProteinId = proteinNameIds.get(proteinName);
+					foundValidProtein = true;
+					MatchedProteinForPeptide xProteinForPeptide = new MatchedProteinForPeptide();
+					xProteinsForPeptide.getMatchedProteinForPeptide().add(xProteinForPeptide);
 
-				MatchedProteinForPeptide xProteinForPeptide = new MatchedProteinForPeptide();
-				xProteinsForPeptide.getMatchedProteinForPeptide().add( xProteinForPeptide );
+					xProteinForPeptide.setId(BigInteger.valueOf(matchedProteinId));
+				}
+			}
 
-				xProteinForPeptide.setId( BigInteger.valueOf( matchedProteinId ) );
+			if(!foundValidProtein) {
+				throw new Exception("Did not find any non-decoy proteins for peptide: " + percolatorReportedPeptide );
 			}
 
 			// add in the filterable peptide annotations (e.g., q-value)
@@ -305,114 +314,129 @@ public class XMLBuilder {
 
 			// iterate over all PSMs for this reported peptide
 
-			for( int scanNumber : percolatorResults.getIndexedReportedPeptideResults().get( percolatorReportedPeptide ).getPercolatorPSMs().get( fileIndex ).keySet() ) {
+			for( String pepXMLFileRoot : percolatorResults.getIndexedReportedPeptideResults().get(percolatorReportedPeptide).getPercolatorPSMs().keySet()) {
 
-				CometPSM psm = cometResults.getPeptidePSMMap().get( cometReportedPeptide ).get( scanNumber );
-
-				Psm xmlPsm = new Psm();
-				xmlPsms.getPsm().add( xmlPsm );
-
-				xmlPsm.setScanNumber( new BigInteger( String.valueOf( scanNumber ) ) );
-				xmlPsm.setPrecursorCharge( new BigInteger( String.valueOf( psm.getCharge() ) ) );
-
-				// add in the filterable PSM annotations (e.g., score)
-				FilterablePsmAnnotations xmlFilterablePsmAnnotations = new FilterablePsmAnnotations();
-				xmlPsm.setFilterablePsmAnnotations( xmlFilterablePsmAnnotations );
-
-				// handle comet scores
-				{
-					FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
-					xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add( xmlFilterablePsmAnnotation );
-
-					xmlFilterablePsmAnnotation.setAnnotationName( PSMAnnotationTypes.COMET_ANNOTATION_TYPE_DELTACN );
-					xmlFilterablePsmAnnotation.setSearchProgram( Constants.PROGRAM_NAME_COMET );
-					xmlFilterablePsmAnnotation.setValue( psm.getDeltaCn() );
-				}
-				{
-					FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
-					xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add( xmlFilterablePsmAnnotation );
-
-					xmlFilterablePsmAnnotation.setAnnotationName( PSMAnnotationTypes.COMET_ANNOTATION_TYPE_DELTACNSTAR );
-					xmlFilterablePsmAnnotation.setSearchProgram( Constants.PROGRAM_NAME_COMET );
-					xmlFilterablePsmAnnotation.setValue( psm.getDeltaCnStar() );
-				}
-				{
-					FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
-					xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add( xmlFilterablePsmAnnotation );
-
-					xmlFilterablePsmAnnotation.setAnnotationName( PSMAnnotationTypes.COMET_ANNOTATION_TYPE_EXPECT );
-					xmlFilterablePsmAnnotation.setSearchProgram( Constants.PROGRAM_NAME_COMET );
-					xmlFilterablePsmAnnotation.setValue( psm.geteValue() );
-				}
-				{
-					FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
-					xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add( xmlFilterablePsmAnnotation );
-
-					xmlFilterablePsmAnnotation.setAnnotationName( PSMAnnotationTypes.COMET_ANNOTATION_TYPE_SPRANK );
-					xmlFilterablePsmAnnotation.setSearchProgram( Constants.PROGRAM_NAME_COMET );
-					xmlFilterablePsmAnnotation.setValue( psm.getSpRank() );
-				}
-				{
-					FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
-					xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add( xmlFilterablePsmAnnotation );
-
-					xmlFilterablePsmAnnotation.setAnnotationName( PSMAnnotationTypes.COMET_ANNOTATION_TYPE_SPSCORE );
-					xmlFilterablePsmAnnotation.setSearchProgram( Constants.PROGRAM_NAME_COMET );
-					xmlFilterablePsmAnnotation.setValue( psm.getSpScore() );
-				}
-				{
-					FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
-					xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add( xmlFilterablePsmAnnotation );
-
-					xmlFilterablePsmAnnotation.setAnnotationName( PSMAnnotationTypes.COMET_ANNOTATION_TYPE_XCORR );
-					xmlFilterablePsmAnnotation.setSearchProgram( Constants.PROGRAM_NAME_COMET );
-					xmlFilterablePsmAnnotation.setValue( psm.getxCorr() );
-				}
-				{
-					FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
-					xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add( xmlFilterablePsmAnnotation );
-
-					xmlFilterablePsmAnnotation.setAnnotationName( PSMAnnotationTypes.COMET_ANNOTATION_TYPE_HIT_RANK );
-					xmlFilterablePsmAnnotation.setSearchProgram( Constants.PROGRAM_NAME_COMET );
-					xmlFilterablePsmAnnotation.setValue( BigDecimal.valueOf( psm.getHitRank() ).setScale( 0, RoundingMode.HALF_UP ) );
+				System.out.println("pepXMLFileRoot: " + pepXMLFileRoot);
+				for(String p : indexedCometResults.keySet()) {
+					System.out.println(p);
 				}
 
-				// handle percolator scores
-				PercolatorPSM percolatorPSM = percolatorResults.getIndexedReportedPeptideResults().get( percolatorReportedPeptide ).getPercolatorPSMs().get( fileIndex ).get( scanNumber );
-				{
-					FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
-					xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add( xmlFilterablePsmAnnotation );
-					
-					xmlFilterablePsmAnnotation.setAnnotationName( PSMAnnotationTypes.PERCOLATOR_ANNOTATION_TYPE_PEP );
-					xmlFilterablePsmAnnotation.setSearchProgram( Constants.PROGRAM_NAME_PERCOLATOR );
-					xmlFilterablePsmAnnotation.setValue( BigDecimal.valueOf( percolatorPSM.getPep() ) );
+				Map<Integer, PercolatorPSM> percolatorPSMData = percolatorResults.getIndexedReportedPeptideResults().get(percolatorReportedPeptide).getPercolatorPSMs().get(pepXMLFileRoot);
+
+				// no psm data for this peptide in this pepxml file, go to next file
+				if(percolatorPSMData == null || indexedCometResults.get(pepXMLFileRoot).getPeptidePSMMap() == null) {
+					continue;
 				}
-				{
-					FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
-					xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add( xmlFilterablePsmAnnotation );
-					
-					xmlFilterablePsmAnnotation.setAnnotationName( PSMAnnotationTypes.PERCOLATOR_ANNOTATION_TYPE_PVALUE );
-					xmlFilterablePsmAnnotation.setSearchProgram( Constants.PROGRAM_NAME_PERCOLATOR );
-					xmlFilterablePsmAnnotation.setValue( BigDecimal.valueOf( percolatorPSM.getpValue() ) );
-				}
-				{
-					FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
-					xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add( xmlFilterablePsmAnnotation );
-					
-					xmlFilterablePsmAnnotation.setAnnotationName( PSMAnnotationTypes.PERCOLATOR_ANNOTATION_TYPE_QVALUE );
-					xmlFilterablePsmAnnotation.setSearchProgram( Constants.PROGRAM_NAME_PERCOLATOR );
-					xmlFilterablePsmAnnotation.setValue( BigDecimal.valueOf( percolatorPSM.getqValue() ) );
-				}
-				{
-					FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
-					xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add( xmlFilterablePsmAnnotation );
-					
-					xmlFilterablePsmAnnotation.setAnnotationName( PSMAnnotationTypes.PERCOLATOR_ANNOTATION_TYPE_SVMSCORE );
-					xmlFilterablePsmAnnotation.setSearchProgram( Constants.PROGRAM_NAME_PERCOLATOR );
-					xmlFilterablePsmAnnotation.setValue( BigDecimal.valueOf( percolatorPSM.getSvmScore() ) );
-				}
-				
-			}// end iterating over psms for a reported peptide
+
+				for (int scanNumber : percolatorPSMData.keySet()) {
+
+					CometPSM psm = indexedCometResults.get(pepXMLFileRoot).getPeptidePSMMap().get(cometReportedPeptide).get(scanNumber);
+
+					Psm xmlPsm = new Psm();
+					xmlPsms.getPsm().add(xmlPsm);
+
+					xmlPsm.setScanNumber(new BigInteger(String.valueOf(scanNumber)));
+					xmlPsm.setPrecursorCharge(new BigInteger(String.valueOf(psm.getCharge())));
+
+					// add in the filterable PSM annotations (e.g., score)
+					FilterablePsmAnnotations xmlFilterablePsmAnnotations = new FilterablePsmAnnotations();
+					xmlPsm.setFilterablePsmAnnotations(xmlFilterablePsmAnnotations);
+
+					// handle comet scores
+					{
+						FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
+						xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add(xmlFilterablePsmAnnotation);
+
+						xmlFilterablePsmAnnotation.setAnnotationName(PSMAnnotationTypes.COMET_ANNOTATION_TYPE_DELTACN);
+						xmlFilterablePsmAnnotation.setSearchProgram(Constants.PROGRAM_NAME_COMET);
+						xmlFilterablePsmAnnotation.setValue(psm.getDeltaCn());
+					}
+					{
+						FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
+						xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add(xmlFilterablePsmAnnotation);
+
+						xmlFilterablePsmAnnotation.setAnnotationName(PSMAnnotationTypes.COMET_ANNOTATION_TYPE_DELTACNSTAR);
+						xmlFilterablePsmAnnotation.setSearchProgram(Constants.PROGRAM_NAME_COMET);
+						xmlFilterablePsmAnnotation.setValue(psm.getDeltaCnStar());
+					}
+					{
+						FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
+						xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add(xmlFilterablePsmAnnotation);
+
+						xmlFilterablePsmAnnotation.setAnnotationName(PSMAnnotationTypes.COMET_ANNOTATION_TYPE_EXPECT);
+						xmlFilterablePsmAnnotation.setSearchProgram(Constants.PROGRAM_NAME_COMET);
+						xmlFilterablePsmAnnotation.setValue(psm.geteValue());
+					}
+					{
+						FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
+						xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add(xmlFilterablePsmAnnotation);
+
+						xmlFilterablePsmAnnotation.setAnnotationName(PSMAnnotationTypes.COMET_ANNOTATION_TYPE_SPRANK);
+						xmlFilterablePsmAnnotation.setSearchProgram(Constants.PROGRAM_NAME_COMET);
+						xmlFilterablePsmAnnotation.setValue(psm.getSpRank());
+					}
+					{
+						FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
+						xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add(xmlFilterablePsmAnnotation);
+
+						xmlFilterablePsmAnnotation.setAnnotationName(PSMAnnotationTypes.COMET_ANNOTATION_TYPE_SPSCORE);
+						xmlFilterablePsmAnnotation.setSearchProgram(Constants.PROGRAM_NAME_COMET);
+						xmlFilterablePsmAnnotation.setValue(psm.getSpScore());
+					}
+					{
+						FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
+						xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add(xmlFilterablePsmAnnotation);
+
+						xmlFilterablePsmAnnotation.setAnnotationName(PSMAnnotationTypes.COMET_ANNOTATION_TYPE_XCORR);
+						xmlFilterablePsmAnnotation.setSearchProgram(Constants.PROGRAM_NAME_COMET);
+						xmlFilterablePsmAnnotation.setValue(psm.getxCorr());
+					}
+					{
+						FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
+						xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add(xmlFilterablePsmAnnotation);
+
+						xmlFilterablePsmAnnotation.setAnnotationName(PSMAnnotationTypes.COMET_ANNOTATION_TYPE_HIT_RANK);
+						xmlFilterablePsmAnnotation.setSearchProgram(Constants.PROGRAM_NAME_COMET);
+						xmlFilterablePsmAnnotation.setValue(BigDecimal.valueOf(psm.getHitRank()).setScale(0, RoundingMode.HALF_UP));
+					}
+
+					// handle percolator scores
+					PercolatorPSM percolatorPSM = percolatorPSMData.get(scanNumber);
+					{
+						FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
+						xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add(xmlFilterablePsmAnnotation);
+
+						xmlFilterablePsmAnnotation.setAnnotationName(PSMAnnotationTypes.PERCOLATOR_ANNOTATION_TYPE_PEP);
+						xmlFilterablePsmAnnotation.setSearchProgram(Constants.PROGRAM_NAME_PERCOLATOR);
+						xmlFilterablePsmAnnotation.setValue(BigDecimal.valueOf(percolatorPSM.getPep()));
+					}
+					{
+						FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
+						xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add(xmlFilterablePsmAnnotation);
+
+						xmlFilterablePsmAnnotation.setAnnotationName(PSMAnnotationTypes.PERCOLATOR_ANNOTATION_TYPE_PVALUE);
+						xmlFilterablePsmAnnotation.setSearchProgram(Constants.PROGRAM_NAME_PERCOLATOR);
+						xmlFilterablePsmAnnotation.setValue(BigDecimal.valueOf(percolatorPSM.getpValue()));
+					}
+					{
+						FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
+						xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add(xmlFilterablePsmAnnotation);
+
+						xmlFilterablePsmAnnotation.setAnnotationName(PSMAnnotationTypes.PERCOLATOR_ANNOTATION_TYPE_QVALUE);
+						xmlFilterablePsmAnnotation.setSearchProgram(Constants.PROGRAM_NAME_PERCOLATOR);
+						xmlFilterablePsmAnnotation.setValue(BigDecimal.valueOf(percolatorPSM.getqValue()));
+					}
+					{
+						FilterablePsmAnnotation xmlFilterablePsmAnnotation = new FilterablePsmAnnotation();
+						xmlFilterablePsmAnnotations.getFilterablePsmAnnotation().add(xmlFilterablePsmAnnotation);
+
+						xmlFilterablePsmAnnotation.setAnnotationName(PSMAnnotationTypes.PERCOLATOR_ANNOTATION_TYPE_SVMSCORE);
+						xmlFilterablePsmAnnotation.setSearchProgram(Constants.PROGRAM_NAME_PERCOLATOR);
+						xmlFilterablePsmAnnotation.setValue(BigDecimal.valueOf(percolatorPSM.getSvmScore()));
+					}
+
+				}// end iterating over psms for a reported peptide
+			}
 		
 		}//end iterating over reported peptides
 
@@ -426,19 +450,14 @@ public class XMLBuilder {
 		xmlConfigurationFiles.getConfigurationFile().add( xmlConfigurationFile );
 		
 		xmlConfigurationFile.setSearchProgram( Constants.PROGRAM_NAME_COMET );
-		xmlConfigurationFile.setFileName( conversionParameters.getCometParametersFile().getName() );
-		xmlConfigurationFile.setFileContent( Files.readAllBytes( FileSystems.getDefault().getPath( conversionParameters.getCometParametersFile().getAbsolutePath() ) ) );
+		xmlConfigurationFile.setFileName(CruxUtils.getCometParams(conversionParameters.getCruxOutputDirectory()).getName() );
+		xmlConfigurationFile.setFileContent( Files.readAllBytes( FileSystems.getDefault().getPath( CruxUtils.getCometParams(conversionParameters.getCruxOutputDirectory()).getAbsolutePath() ) ) );
 		
 		
 		//make the xml file
-		CreateImportFileFromJavaObjectsMain.getInstance().createImportFileFromJavaObjectsMain( getLimelightXMLFile( cruxOutputParams, fileIndex ), limelightInputRoot);
+		CreateImportFileFromJavaObjectsMain.getInstance().createImportFileFromJavaObjectsMain( conversionParameters.getOutputFile(), limelightInputRoot);
 
 	}
 
-	private static File getLimelightXMLFile(CruxOutputParameters cruxOutputParameters, Integer fileIndex ) {
-
-		return new File(cruxOutputParameters.getCruxFileIndexMap().get( fileIndex ) + ".limelight.xml" );
-
-	}
 	
 }

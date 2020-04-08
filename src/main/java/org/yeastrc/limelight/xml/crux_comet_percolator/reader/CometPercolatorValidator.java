@@ -6,6 +6,9 @@ import org.yeastrc.limelight.xml.crux_comet_percolator.objects.IndexedPercolator
 import org.yeastrc.limelight.xml.crux_comet_percolator.objects.IndexedPercolatorResults;
 import org.yeastrc.limelight.xml.crux_comet_percolator.utils.CometParsingUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class CometPercolatorValidator {
 
 	/**
@@ -17,15 +20,21 @@ public class CometPercolatorValidator {
 	 */
 	public static void validateData( CometResults cometResults, IndexedPercolatorResults percolatorResults, String pepXMLFileRoot ) throws Exception {
 
+		Map<String, CometReportedPeptide> lookupMap = new HashMap<>();
+		for(CometReportedPeptide cometReportedPeptide : cometResults.getPeptidePSMMap().keySet()) {
+			lookupMap.put(cometReportedPeptide.getReportedPeptideString(), cometReportedPeptide);
+		}
+
 		for( String percolatorReportedPeptide : percolatorResults.getIndexedReportedPeptideResults().keySet() ) {
 
-			CometReportedPeptide cometReportedPeptide = CometParsingUtils.getCometReportedPeptideForString( percolatorReportedPeptide, cometResults );
 			IndexedPercolatorPeptideData indexedPercolatorPeptideData = percolatorResults.getIndexedReportedPeptideResults().get( percolatorReportedPeptide );
 
 			// There are no percolator data for this peptide in this file index
 			if( !indexedPercolatorPeptideData.getPercolatorPSMs().containsKey( pepXMLFileRoot ) ) {
 				continue;
 			}
+
+			CometReportedPeptide cometReportedPeptide = lookupMap.get(percolatorReportedPeptide);
 
 			if( cometReportedPeptide == null ) {
 				throw new Exception( "Error: Comet results not found for peptide: " + percolatorReportedPeptide );

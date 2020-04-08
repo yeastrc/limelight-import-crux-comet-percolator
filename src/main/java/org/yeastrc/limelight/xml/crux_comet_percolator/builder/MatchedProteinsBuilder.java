@@ -57,9 +57,17 @@ public class MatchedProteinsBuilder {
 		{
 			Collection<String> proteinNamesNotFoundInFasta = getProteinNamesNotFoundInFasta(proteinNames, proteins);
 			if (proteinNamesNotFoundInFasta.size() > 0) {
-				throw new Exception("The following protein names were not found in FASTA: " + String.join(", ", proteinNamesNotFoundInFasta));
+//				throw new Exception("The following protein names were not found in FASTA: " + String.join(", ", proteinNamesNotFoundInFasta));
+
+				// remove proteins not found in the FASTA, likely spill over of decoys
+				for(String p : proteinNamesNotFoundInFasta) {
+					proteins.remove(p);
+					proteinNames.remove(p);
+				}
 			}
 		}
+
+
 
 		// map and validate protein names to protein sequence ids
 		Map<String, Integer> proteinNameIdMap = getMatchedProteinIdsForProteinNames( proteins, proteinNames );

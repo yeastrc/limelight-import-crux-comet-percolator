@@ -69,7 +69,9 @@ public class ConverterRunner {
 		for( File pepXMLFile : pepXMLFiles ) {
 
 			String pepXMLFileName = pepXMLFile.getName();
-			String pepXMLFileNameRoot = FilenameUtils.removeExtension(pepXMLFileName);
+			String pepXMLFileNameRoot = FilenameUtils.removeExtension(pepXMLFileName);	// remove the .xml
+			pepXMLFileNameRoot = FilenameUtils.removeExtension(pepXMLFileNameRoot);		// remove the .pep
+			pepXMLFileNameRoot = FilenameUtils.removeExtension(pepXMLFileNameRoot);		// remove the .target
 
 			System.err.println( "\nProcess pepXML file: " + pepXMLFileName );
 
@@ -88,7 +90,7 @@ public class ConverterRunner {
 			indexedCometResults.put(pepXMLFileNameRoot, cometResults);
 		}
 
-		System.err.print( "\tWriting out XML..." );
+		System.err.print( "\nWriting out XML..." );
 		(new XMLBuilder()).buildAndSaveXML(
 				conversionParameters,
 				cometParams,

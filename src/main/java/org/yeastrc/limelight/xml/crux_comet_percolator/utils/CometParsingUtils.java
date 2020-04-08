@@ -21,6 +21,17 @@ public class CometParsingUtils {
 		return null;
 	}
 
+	public static CometReportedPeptide getCometReportedPeptideForString( String reportedPeptide, CometResults cometResults ) {
+
+		for( CometReportedPeptide cometPeptide : cometResults.getPeptidePSMMap().keySet() ) {
+			if( cometPeptide.getReportedPeptideString().equals( reportedPeptide ) ) {
+				return cometPeptide;
+			}
+		}
+
+		return null;
+	}
+
 	/**
 	 * Comet reports n-terminal mod mass as the mod mass plus Hydrogen (don't ask). So subtract hydrogen
 	 * from the reported mod mass to get real mod mass.

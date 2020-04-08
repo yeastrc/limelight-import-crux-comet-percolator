@@ -30,17 +30,15 @@ public class PercolatorParsingUtils {
 	 * @return
 	 */
 	public static int getScanNumberFromScanId( String scanId ) {
-		
-		Pattern p1 = Pattern.compile( "^target_\\d+_(\\d+)_.+$" );
 
-		Matcher m = p1.matcher( scanId );
+		Matcher m = scanNumberPattern.matcher( scanId );
 
 		if( m.matches() ) {
 			return Integer.parseInt( m.group( 1 ) );
 		}
 
 
-		throw new IllegalArgumentException( "Scan id is not of the expected syntax. Got: " + scanId + ", expected something like: target_17_15544_2_1" );
+		throw new IllegalArgumentException( "Scan id is not of the expected syntax. Got: " + scanId + ", expected something like: comet.2020_0212_Loomis_10_DDA_newLC_58146_3_1" );
 	}
 
 	/**
@@ -50,15 +48,17 @@ public class PercolatorParsingUtils {
 	 */
 	public static String getPepXMLFileName( String scanId ) {
 
-		Matcher m = p1.matcher( scanId );
+		Matcher m = filenamePattern.matcher( scanId );
 
 		if( m.matches() ) {
-			return m.group( 1 );
+			return "comet." + m.group( 1 );
 		}
 
 		throw new IllegalArgumentException( "Scan id is not of the expected syntax. Got: " + scanId + ", expected something like: comet.2020_0212_Loomis_10_DDA_newLC_58146_3_1" );
 	}
 
-	private static final Pattern p1 = Pattern.compile( "^.*comet\\.(.+)_\\d+_\\d+_\\d+$" );
+	private static final Pattern filenamePattern = Pattern.compile( "^.*comet\\.(.+)_\\d+_\\d+_\\d+$" );
+
+	private static final Pattern scanNumberPattern = Pattern.compile( "^.*comet\\..+_(\\d)+_\\d+_\\d+$" );
 
 }
