@@ -44,7 +44,7 @@ public class ConverterRunner {
 
 		System.err.print( "Finding percolator output file..." );
 		File percoutFile = CruxUtils.getPercolatorOutputFile(conversionParameters.getCruxOutputDirectory());
-		System.err.println( " Found " + pepXMLFiles.size() + " file(s)." );
+		System.err.println( " Done" );
 
 		System.err.println( "Determining versions for pipeline..." );
 		String cruxVersion = CruxUtils.getCruxVersion(conversionParameters.getCruxOutputDirectory());
