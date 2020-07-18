@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.com/yeastrc/limelight-import-crux-comet-percolator.svg?branch=master)](https://travis-ci.com/yeastrc/limelight-import-crux-comet-percolator)
+
+
 Crux Comet/Percolator to limelight XML Converter
 ===================================================
 
