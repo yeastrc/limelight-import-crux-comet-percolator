@@ -4,7 +4,7 @@
 Crux Comet/Percolator to limelight XML Converter
 ===================================================
 
-Use this program to convert the results of a Crux Comet + Percolator analysis to
+Use this program to convert the results of a Crux Comet + Percolator (crux-toolkit/crux-toolkit) analysis to
 limelight XML suitable for import into the limelight web application. Requires that
 comet results be output as PepXML and that percolator output be represented as XML.
 
