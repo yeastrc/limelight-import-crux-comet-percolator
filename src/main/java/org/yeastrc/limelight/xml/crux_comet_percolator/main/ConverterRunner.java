@@ -102,5 +102,10 @@ public class ConverterRunner {
 		);
 		System.err.println(" Done.");
 
+		// validate the limelight xml
+		System.err.print( "Validating Limelight XML..." );
+		LimelightXMLValidator.validateLimelightXML(conversionParameters.getOutputFile());
+		System.err.println( " Done." );
+
 	}
 }
