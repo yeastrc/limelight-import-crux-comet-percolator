@@ -98,8 +98,17 @@ public class CometPepXMLResultsParser {
 						if( psm != null ) {
 							CometReportedPeptide tppRp = ReportedPeptideUtils.getTPPReportedPeptideForTPPPSM( psm );
 							
-							if( !results.getPeptidePSMMap().containsKey( tppRp ) )
-								results.getPeptidePSMMap().put( tppRp, new HashMap<>() );
+							if( !results.getPeptidePSMMap().containsKey( tppRp ) ) {
+								results.getPeptidePSMMap().put(tppRp, new HashMap<>());
+							} else {
+
+								/*
+										not all proteins lists are the same for the same reported peptide...
+										ensure the proteins reported for this psm are put into the reported
+										peptide already in the master map
+								 */
+								CometPepXMLResultsParser.getReportedPeptideKeyFromMap(tppRp, resultMap).getProteinMatches().addAll(psm.getProteinNames());
+							}
 							
 							results.getPeptidePSMMap().get( tppRp ).put( psm.getScanNumber(), psm );
 						}
@@ -109,6 +118,15 @@ public class CometPepXMLResultsParser {
 		}
 		
 		return results;
+	}
+
+	private static CometReportedPeptide getReportedPeptideKeyFromMap( CometReportedPeptide tppRp, Map<CometReportedPeptide,Map<Integer,CometPSM>> resultMap ) throws Exception {
+		for(CometReportedPeptide crp : resultMap.keySet()) {
+			if(crp.equals(tppRp))
+				return crp;
+		}
+
+		throw new Exception("Could not find existing reported peptide in map for " + tppRp );
 	}
 	
 }
