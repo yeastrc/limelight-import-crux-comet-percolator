@@ -34,8 +34,8 @@ public class ConverterRunner {
 
 	// conveniently get a new instance of this class
 	public static ConverterRunner createInstance() { return new ConverterRunner(); }
-	
-	
+
+
 	public void convertCruxCometPercolatorToLimelightXML(ConversionParameters conversionParameters ) throws Throwable {
 
 		System.err.print( "Finding pepXML files..." );
@@ -98,7 +98,8 @@ public class ConverterRunner {
 				percResults,
 				cruxVersion,
 				cometVersion,
-				percVersion
+				percVersion,
+				pepXMLFiles.size() > 1
 		);
 		System.err.println(" Done.");
 

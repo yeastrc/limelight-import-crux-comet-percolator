@@ -35,7 +35,8 @@ public class XMLBuilder {
 			                     IndexedPercolatorResults percolatorResults,
 			                     String cruxVersion,
 								 String cometVersion,
-								 String percolatorVersion)
+								 String percolatorVersion,
+								 boolean multiSearch)
     throws Exception {
 
 
@@ -344,6 +345,10 @@ public class XMLBuilder {
 					xmlPsm.setScanNumber(new BigInteger(String.valueOf(scanNumber)));
 					xmlPsm.setPrecursorCharge(new BigInteger(String.valueOf(psm.getCharge())));
 					xmlPsm.setScanFileName(psm.getSpectralFilename());
+
+					if(multiSearch) {
+						xmlPsm.setSubgroupName(pepXMLFileRoot);
+					}
 
 					// add in the filterable PSM annotations (e.g., score)
 					FilterablePsmAnnotations xmlFilterablePsmAnnotations = new FilterablePsmAnnotations();
