@@ -114,17 +114,20 @@ public class PercolatorResultsReader {
 				throw new Exception( "Peptide contains psmId: " + psmId + ", but no PSM with that id was found. Peptide: " + xpeptide.getPeptideId() );
 			
 			PercolatorPSM psm = psmIdPSMMap.get( psmId );	
-			
+			String filename = psm.getPepXMLFile();
+
 			if( !psm.getReportedPeptide().equals( xpeptide.getPeptideId() ) )
 				throw new Exception( "PSM (" + psm + ") has a different reported peptide than this peptide id: " + xpeptide.getPeptideId() );
-			
-			if( psmsForPeptide.containsKey( psm.getScanNumber() ) ) {
+
+			if(!psmsForPeptide.containsKey(filename)) {
+				psmsForPeptide.put(filename, new HashMap<>());
+			}
+
+			if( psmsForPeptide.get(filename).containsKey( psm.getScanNumber() ) ) {
 				throw new Exception( "Got more than one entry for the same scan to the same reported peptide... Scan number: " + psm.getScanNumber() );
 			}
 
-			Map scanNumberMap = new HashMap<>();
-			scanNumberMap.put( psm.getScanNumber(), psm );
-			psmsForPeptide.put( psm.getPepXMLFile(), scanNumberMap );
+			psmsForPeptide.get(filename).put(psm.getScanNumber(), psm);
 		}
 		
 		return psmsForPeptide;
