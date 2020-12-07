@@ -21,6 +21,7 @@ package org.yeastrc.limelight.xml.crux_comet_percolator.main;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 
 import org.yeastrc.limelight.xml.crux_comet_percolator.constants.Constants;
 import org.yeastrc.limelight.xml.crux_comet_percolator.objects.ConversionParameters;
@@ -58,6 +59,9 @@ public class MainProgram implements Runnable{
 	@CommandLine.Option(names = { "-v", "--verbose" }, required = false, description = "If this parameter is present, error messages will include a full stacktrace. Helpful for debugging.")
 	private boolean verboseRequested = false;
 
+	@CommandLine.Option(names = { "-q", "--q-value-cutoff" }, required = false, description = "The default q-value cutoff to use for filtering data in limelight. Default is " + Constants.DEFAULT_Q_VALUE_CUTOFF)
+	private BigDecimal qValueCutoff = new BigDecimal(Constants.DEFAULT_Q_VALUE_CUTOFF);
+
 	private String[] args;
 
 	public void run() {
@@ -81,6 +85,7 @@ public class MainProgram implements Runnable{
 		cp.setFastaFile( fastaFile );
 		cp.setCruxOutputDirectory( cruxOutputDirectory );
 		cp.setOutputFile(outFile);
+		cp.setqValueCutoff(qValueCutoff);
 
 		try {
 			ConverterRunner.createInstance().convertCruxCometPercolatorToLimelightXML(cp);

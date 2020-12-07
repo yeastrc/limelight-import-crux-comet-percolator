@@ -19,6 +19,7 @@
 package org.yeastrc.limelight.xml.crux_comet_percolator.objects;
 
 import java.io.File;
+import java.math.BigDecimal;
 
 public class ConversionParameters {
 		
@@ -63,9 +64,18 @@ public class ConversionParameters {
 		this.cruxOutputDirectory = cruxOutputDirectory;
 	}
 
+	public BigDecimal getqValueCutoff() {
+		return qValueCutoff;
+	}
+
+	public void setqValueCutoff(BigDecimal qValueCutoff) {
+		this.qValueCutoff = qValueCutoff;
+	}
+
 	private File fastaFile;
 	private File cruxOutputDirectory;
 	private File outputFile;
 	private ConversionProgramInfo conversionProgramInfo;
+	private BigDecimal qValueCutoff;
 	
 }
