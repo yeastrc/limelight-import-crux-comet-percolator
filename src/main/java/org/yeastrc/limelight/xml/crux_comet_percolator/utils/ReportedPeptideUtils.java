@@ -24,7 +24,7 @@ public class ReportedPeptideUtils {
 	public static String getReportedPeptideStringForSequenceAndMods( String sequence, Map<Integer, BigDecimal> mods ) throws Exception {
 		
 		for( int position : mods.keySet() ) {
-			if( position < 0 || position > sequence.length() )
+			if( position < 0 || position > sequence.length() + 1 )
 				throw new Exception( "Position " + position + " is not in the peptide sequence." );
 		}
 		
