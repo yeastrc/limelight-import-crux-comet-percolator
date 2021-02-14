@@ -25,11 +25,7 @@ crux percolator --pout-output T crux-output/comet*.pin
 
 Note about multiple comet searches in one percolator run
 -----------------------------------------------------------
-Limelight will consider a single run of Percolator as a single search--regardless of how many comet searches
-were collated by a single percolator run. For example, if you have two conditions with 3 replicates in each
-condition, you can run percolator twice--once for each set of 3 replicates. Converting these to two limelight
-XML files and uploading them will result in two searches in limelight that may be compared to each other (or other searches).
-
+When multiple comet output files are processed at once by Percolator, the results of all of these will be present in a single Limelight XML file. This will appear in limelight as a single upload, but the results from each individual comet search will be present as distinct subsearches and may be viewed separately and compared to one another.
 
 How To Run Converter
 ----------------------
