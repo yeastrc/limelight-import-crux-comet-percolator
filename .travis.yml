@@ -4,9 +4,9 @@ language: java
 
 jdk:
   - oraclejdk8
-  - oraclejdk11
+  - oraclejdk12
   - openjdk8
-  - openjdk11
+  - openjdk12
 
 # see https://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure
 sudo: false
