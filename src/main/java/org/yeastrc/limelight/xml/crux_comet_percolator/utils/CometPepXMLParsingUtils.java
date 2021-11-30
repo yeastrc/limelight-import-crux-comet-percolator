@@ -165,10 +165,16 @@ public class CometPepXMLParsingUtils {
 		
 		psm.setxCorr( getScoreForType( searchHit, "xcorr" ) );
 		psm.setDeltaCn( getScoreForType( searchHit, "deltacn" ) );
-		psm.setDeltaCnStar( getScoreForType( searchHit, "deltacnstar" ) );
 		psm.setSpScore( getScoreForType( searchHit, "spscore" ) );
 		psm.setSpRank( getScoreForType( searchHit, "sprank" ) );
 		psm.seteValue( getScoreForType( searchHit, "expect" ) );
+
+		// detalcnstar may not be present
+		try {
+			psm.setDeltaCnStar(getScoreForType(searchHit, "deltacnstar"));
+		} catch(Exception e) {
+			;
+		}
 
 		try {
 			psm.setProteinNames( getProteinNamesForSearchHit( searchHit, cometParams ) );

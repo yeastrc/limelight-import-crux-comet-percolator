@@ -47,7 +47,7 @@ public class PSMAnnotationTypes {
 
 	
 	
-	public static List<FilterablePsmAnnotationType> getFilterablePsmAnnotationTypes(String programName, ConversionParameters params) {
+	public static List<FilterablePsmAnnotationType> getFilterablePsmAnnotationTypes(String programName, boolean deltaCNStarPresent, ConversionParameters params) {
 		List<FilterablePsmAnnotationType> types = new ArrayList<FilterablePsmAnnotationType>();
 
 		if( programName.equals( Constants.PROGRAM_NAME_COMET ) ) {
@@ -68,8 +68,8 @@ public class PSMAnnotationTypes {
 				
 				types.add( type );
 			}
-			
-			{
+
+			if(deltaCNStarPresent) {
 				FilterablePsmAnnotationType type = new FilterablePsmAnnotationType();
 				type.setName( COMET_ANNOTATION_TYPE_DELTACNSTAR );
 				type.setDescription( "Difference between the XCorr of this PSM and the next best PSM" );

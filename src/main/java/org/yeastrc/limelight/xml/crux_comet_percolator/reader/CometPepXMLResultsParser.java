@@ -96,6 +96,11 @@ public class CometPepXMLResultsParser {
 						}
 						
 						if( psm != null ) {
+
+							if(results.isDeltaCNStarPresent() && psm.getDeltaCnStar() == null) {
+								results.setDeltaCNStarPresent( false );
+							}
+
 							CometReportedPeptide tppRp = ReportedPeptideUtils.getTPPReportedPeptideForTPPPSM( psm );
 							
 							if( !results.getPeptidePSMMap().containsKey( tppRp ) ) {
