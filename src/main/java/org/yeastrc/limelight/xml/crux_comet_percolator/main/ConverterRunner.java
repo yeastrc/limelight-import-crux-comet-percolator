@@ -71,7 +71,9 @@ public class ConverterRunner {
 			String pepXMLFileName = pepXMLFile.getName();
 			String pepXMLFileNameRoot = FilenameUtils.removeExtension(pepXMLFileName);	// remove the .xml
 			pepXMLFileNameRoot = FilenameUtils.removeExtension(pepXMLFileNameRoot);		// remove the .pep
-			pepXMLFileNameRoot = FilenameUtils.removeExtension(pepXMLFileNameRoot);		// remove the .target
+
+			if(pepXMLFileNameRoot.endsWith(".target"))
+				pepXMLFileNameRoot = FilenameUtils.removeExtension(pepXMLFileNameRoot);		// remove the .target
 
 			System.err.println( "\nProcess pepXML file: " + pepXMLFileName );
 

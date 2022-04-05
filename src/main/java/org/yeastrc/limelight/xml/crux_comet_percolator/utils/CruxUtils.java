@@ -28,8 +28,23 @@ public class CruxUtils {
                 continue;
             }
 
-            if( fileEntry.getName().endsWith( CruxConstants.pepXMLSuffix ) ) {
+            // preferentially get .target.pep.xml instead of all pepxmls since we don't currently import decoys
+            if( fileEntry.getName().endsWith( CruxConstants.pepXMLSuffixPrimary ) ) {
                 pepXMLFiles.add( fileEntry );
+            }
+        }
+
+        if(pepXMLFiles.size() < 1) {
+
+            for (final File fileEntry : cruxDataDirectory.listFiles()) {
+                if( fileEntry.isDirectory() ) {
+                    continue;
+                }
+
+                // targets and decoys are in the same pepxml file and the filenames do not include 'target'
+                if( fileEntry.getName().endsWith( CruxConstants.pepXMLSuffixSecondary ) ) {
+                    pepXMLFiles.add( fileEntry );
+                }
             }
         }
 
