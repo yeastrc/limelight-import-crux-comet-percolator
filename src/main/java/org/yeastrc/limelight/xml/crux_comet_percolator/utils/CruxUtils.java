@@ -4,7 +4,9 @@ import org.yeastrc.limelight.xml.crux_comet_percolator.constants.CruxConstants;
 
 import java.io.*;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -120,6 +122,34 @@ public class CruxUtils {
         }
 
         return "Unknown";
+    }
+
+    public static Map<Integer, String> parsePercolatorLogFile(File cruxDataDirectory) throws IOException {
+
+        Map<Integer, String> pepxmlTargetIndexMap = new HashMap<>();
+
+        File percLogFile = getPercolatorLogFile(cruxDataDirectory);
+        if(!percLogFile.exists()) {
+            System.err.println("  Warning: " + percLogFile.getAbsolutePath() + " does not exist. Cannot get percolator version." );
+            return pepxmlTargetIndexMap;
+        }
+
+        try (BufferedReader br = new BufferedReader( new FileReader( percLogFile ) ) ) {
+
+            Pattern p = Pattern.compile("^INFO: Assigning index (\\d+) to (.+)\\.$");
+
+            for ( String line = br.readLine(); line != null; line = br.readLine() ) {
+
+                if(line.startsWith("INFO: Assigning index")) {
+                    Matcher m = p.matcher(line);
+                    if (m.matches()) {
+                        pepxmlTargetIndexMap.put(Integer.parseInt(m.group(1)), m.group(2));
+                    }
+                }
+            }
+        }
+
+        return pepxmlTargetIndexMap;
     }
 
     public static String getCometVersion(File cruxDataDirectory) throws IOException {

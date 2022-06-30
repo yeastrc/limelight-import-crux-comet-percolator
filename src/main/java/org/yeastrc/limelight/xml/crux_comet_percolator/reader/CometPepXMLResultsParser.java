@@ -43,7 +43,7 @@ import net.systemsbiology.regis_web.pepxml.MsmsPipelineAnalysis.MsmsRunSummary.S
  */
 public class CometPepXMLResultsParser {
 
-	public static CometResults getCometResults( File pepXMLFile, CometParameters cometParams ) throws Throwable {
+	public static CometResults getCometResults( File pepXMLFile, CometParameters cometParams, int percolatorModDecimalPlaces ) throws Throwable {
 
 		Map<CometReportedPeptide,Map<Integer,CometPSM>> resultMap = new HashMap<>();
 				
@@ -101,7 +101,7 @@ public class CometPepXMLResultsParser {
 								results.setDeltaCNStarPresent( false );
 							}
 
-							CometReportedPeptide tppRp = ReportedPeptideUtils.getTPPReportedPeptideForTPPPSM( psm );
+							CometReportedPeptide tppRp = ReportedPeptideUtils.getTPPReportedPeptideForTPPPSM( psm, percolatorModDecimalPlaces );
 							
 							if( !results.getPeptidePSMMap().containsKey( tppRp ) ) {
 								results.getPeptidePSMMap().put(tppRp, new HashMap<>());

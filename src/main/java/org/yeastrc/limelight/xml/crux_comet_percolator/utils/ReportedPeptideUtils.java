@@ -9,19 +9,19 @@ import org.yeastrc.limelight.xml.crux_comet_percolator.objects.CometReportedPept
 
 public class ReportedPeptideUtils {
 
-	public static CometReportedPeptide getTPPReportedPeptideForTPPPSM( CometPSM psm ) throws Exception {
+	public static CometReportedPeptide getTPPReportedPeptideForTPPPSM( CometPSM psm, int percolatorModDecimalPlaces ) throws Exception {
 		
 		CometReportedPeptide rp = new CometReportedPeptide();
 		
 		rp.setNakedPeptide( psm.getPeptideSequence() );
 		rp.setMods( psm.getModifications() );
-		rp.setReportedPeptideString( getReportedPeptideStringForSequenceAndMods( psm.getPeptideSequence(), psm.getModifications() ));
+		rp.setReportedPeptideString( getReportedPeptideStringForSequenceAndMods( psm.getPeptideSequence(), psm.getModifications(), percolatorModDecimalPlaces ));
 		rp.setProteinMatches( psm.getProteinNames() );
 
 		return rp;
 	}
 	
-	public static String getReportedPeptideStringForSequenceAndMods( String sequence, Map<Integer, BigDecimal> mods ) throws Exception {
+	public static String getReportedPeptideStringForSequenceAndMods( String sequence, Map<Integer, BigDecimal> mods, int percolatorModDecimalPlaces ) throws Exception {
 		
 		for( int position : mods.keySet() ) {
 			if( position < 0 || position > sequence.length() + 1 )
@@ -38,7 +38,7 @@ public class ReportedPeptideUtils {
 		    
 		    if( mods.containsKey( position ) ) {
 		    	
-		    	BigDecimal v = mods.get( position ).setScale( 4, RoundingMode.HALF_UP );
+		    	BigDecimal v = mods.get( position ).setScale( percolatorModDecimalPlaces, RoundingMode.HALF_UP );
 		    	sb.append( "[" );
 		    	sb.append( v.toString() );
 		    	sb.append( "]" );
@@ -48,7 +48,7 @@ public class ReportedPeptideUtils {
 
 		// add in n-term mod
 		if( mods.containsKey( 0 ) ) {
-			BigDecimal v = mods.get( 0 ).setScale( 4, RoundingMode.HALF_UP );
+			BigDecimal v = mods.get( 0 ).setScale( percolatorModDecimalPlaces, RoundingMode.HALF_UP );
 
 			sb.insert( 0, "n[" + v.toString() + "]" );
 		}
@@ -56,7 +56,7 @@ public class ReportedPeptideUtils {
 
 		// add in c-term mod
 		if( mods.containsKey( sequence.length() + 1 ) ) {
-			BigDecimal v = mods.get( sequence.length() + 1 ).setScale( 4, RoundingMode.HALF_UP );
+			BigDecimal v = mods.get( sequence.length() + 1 ).setScale( percolatorModDecimalPlaces, RoundingMode.HALF_UP );
 
 			sb.append( "c[" + v.toString() + "]" );
 		}

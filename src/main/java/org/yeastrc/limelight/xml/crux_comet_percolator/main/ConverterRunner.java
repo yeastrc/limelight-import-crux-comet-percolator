@@ -23,6 +23,7 @@ import org.yeastrc.limelight.xml.crux_comet_percolator.builder.XMLBuilder;
 import org.yeastrc.limelight.xml.crux_comet_percolator.objects.*;
 import org.yeastrc.limelight.xml.crux_comet_percolator.reader.*;
 import org.yeastrc.limelight.xml.crux_comet_percolator.utils.CruxUtils;
+import org.yeastrc.limelight.xml.crux_comet_percolator.utils.PercolatorParsingUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,6 +47,10 @@ public class ConverterRunner {
 		File percoutFile = CruxUtils.getPercolatorOutputFile(conversionParameters.getCruxOutputDirectory());
 		System.err.println( " Done" );
 
+		System.err.print( "Parsing percolator log file..." );
+		Map<Integer, String> pepxmlTargetIndexMap = CruxUtils.parsePercolatorLogFile(conversionParameters.getCruxOutputDirectory());
+		System.err.println( " Done" );
+
 		System.err.println( "Determining versions for pipeline..." );
 		String cruxVersion = CruxUtils.getCruxVersion(conversionParameters.getCruxOutputDirectory());
 		String cometVersion = CruxUtils.getCometVersion(conversionParameters.getCruxOutputDirectory());
@@ -59,9 +64,13 @@ public class ConverterRunner {
 		System.err.println( " Done." );
 		
 		System.err.print( "Reading Percolator XML data into memory..." );
-		IndexedPercolatorResults percResults = PercolatorResultsReader.getPercolatorResults( percoutFile );
+		IndexedPercolatorResults percResults = PercolatorResultsReader.getPercolatorResults( percoutFile, pepxmlTargetIndexMap );
 		System.err.print( " Got " + percResults.getIndexedReportedPeptideResults().size() + " peptides. " );
 		System.err.println( " Done." );
+
+		System.err.print( "Determining # of decimal places in mods in percolator peptide strings..." );
+		int numberDecimalPlacesInPercolatorMod = PercolatorParsingUtils.getNumberOfDecimalPlacesInPercolatorMod(percResults);
+		System.err.println( "Got: " + numberDecimalPlacesInPercolatorMod );
 
 		Map<String, CometResults> indexedCometResults = new HashMap<>();
 
@@ -82,7 +91,7 @@ public class ConverterRunner {
 			}
 
 			System.err.print( "\tReading Comet pepXML data into memory..." );
-			CometResults cometResults = CometPepXMLResultsParser.getCometResults( pepXMLFile, cometParams );
+			CometResults cometResults = CometPepXMLResultsParser.getCometResults( pepXMLFile, cometParams, numberDecimalPlacesInPercolatorMod );
 			System.err.println( " Done." );
 
 			System.err.print( "\tVerifying all percolator results have comet results..." );

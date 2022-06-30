@@ -44,11 +44,11 @@ public class PercolatorResultsReader {
 	 * @return
 	 * @throws Throwable
 	 */
-	public static IndexedPercolatorResults getPercolatorResults(File file ) throws Throwable {
+	public static IndexedPercolatorResults getPercolatorResults(File file, Map<Integer, String> pepxmlTargetIndexMap) throws Throwable {
 				
 		IPercolatorOutput po = getIPercolatorOutput( file );
 
-		Map<String, PercolatorPSM> psmIdPSMMap = getPercolatorPSMs( po );
+		Map<String, PercolatorPSM> psmIdPSMMap = getPercolatorPSMs( po, pepxmlTargetIndexMap );
 		Map<String, IndexedPercolatorPeptideData> percolatorPeptideData = getPercolatorPeptideData( po, psmIdPSMMap );
 		
 		psmIdPSMMap = null;
@@ -161,14 +161,14 @@ public class PercolatorResultsReader {
 	 * @param po
 	 * @return
 	 */
-	protected static Map<String, PercolatorPSM> getPercolatorPSMs( IPercolatorOutput po ) {
+	protected static Map<String, PercolatorPSM> getPercolatorPSMs( IPercolatorOutput po, Map<Integer, String> pepxmlTargetIndexMap) throws Exception {
 		
 		Map<String, PercolatorPSM> psmIdPSMMap = new HashMap<>();
 		
 	    // loop through PSMs
 	    for( IPsm xpsm : po.getPsms().getPsm() ) {
 	    	
-	    	PercolatorPSM psm = getPercolatorPSMFromJAXB( xpsm );
+	    	PercolatorPSM psm = getPercolatorPSMFromJAXB( xpsm, pepxmlTargetIndexMap );
 	    	psmIdPSMMap.put( psm.getPsmId(), psm );
 
 	    }
@@ -181,7 +181,7 @@ public class PercolatorResultsReader {
 	 * @param xpsm
 	 * @return
 	 */
-	protected static PercolatorPSM getPercolatorPSMFromJAXB( IPsm xpsm ) {
+	protected static PercolatorPSM getPercolatorPSMFromJAXB( IPsm xpsm, Map<Integer, String> pepxmlTargetIndexMap ) throws Exception {
 		
 		PercolatorPSM psm = new PercolatorPSM();
 		
@@ -191,7 +191,7 @@ public class PercolatorResultsReader {
 		psm.setqValue( Double.valueOf( xpsm.getQValue() ) );
 		psm.setReportedPeptide( xpsm.getPeptideSeq().getSeq() );
 		psm.setScanNumber( PercolatorParsingUtils.getScanNumberFromScanId( xpsm.getPsmId() ) );
-		psm.setPepXMLFile( PercolatorParsingUtils.getPepXMLFileName( xpsm.getPsmId() ) );
+		psm.setPepXMLFile( PercolatorParsingUtils.getPepXMLFileNameRoot( xpsm.getPsmId(), pepxmlTargetIndexMap ) );
 		psm.setSvmScore( Double.valueOf( xpsm.getSvmScore() ) );
 		
 		return psm;
