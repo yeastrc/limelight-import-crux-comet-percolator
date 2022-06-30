@@ -2,10 +2,7 @@ package org.yeastrc.limelight.xml.crux_comet_percolator.builder;
 
 import java.io.File;
 import java.math.BigInteger;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 import org.yeastrc.limelight.limelight_import.api.xml_dto.LimelightInput;
 import org.yeastrc.limelight.limelight_import.api.xml_dto.MatchedProtein;
@@ -49,7 +46,7 @@ public class MatchedProteinsBuilder {
 		System.err.print( " Matching peptides to proteins..." );
 
 		// all protein names matched by any peptide
-		Collection<String> proteinNames = getAllProteinsFromResults( reportedPeptides );
+		Set<String> proteinNames = getAllProteinsFromResults( reportedPeptides );
 
 		// find the proteins matched by any of these peptides (map of sequence => fasta annotations
 		Map<String, MatchedProteinInformation> proteins = getProteinsUsingProteinNames( proteinNames, fastaFile );
@@ -84,9 +81,9 @@ public class MatchedProteinsBuilder {
 	 * @param reportedPeptides
 	 * @return
 	 */
-	private Collection<String> getAllProteinsFromResults( Collection<CometReportedPeptide> reportedPeptides ) {
+	private Set<String> getAllProteinsFromResults( Collection<CometReportedPeptide> reportedPeptides ) {
 
-		Collection<String> proteinNames = new HashSet<>();
+		Set<String> proteinNames = new HashSet<>();
 
 		for( CometReportedPeptide reportedPeptide : reportedPeptides ) {
 			proteinNames.addAll( reportedPeptide.getProteinMatches());
@@ -94,10 +91,10 @@ public class MatchedProteinsBuilder {
 
 		return proteinNames;
 	}
-	
-	
-	
-	
+
+
+
+
 	/* ***************** REST OF THIS CAN BE MOVED TO CENTRALIZED LIB **************************** */
 
 
@@ -133,20 +130,20 @@ public class MatchedProteinsBuilder {
 	}
 
 
-	
+
 	/**
 	 * Do the work of building the matched peptides element and adding to limelight xml root
-	 * 
+	 *
 	 * @param limelightInputRoot
 	 * @param proteins
 	 * @throws Exception
 	 */
 	private void buildAndAddMatchedProteinsToXML( LimelightInput limelightInputRoot,
 												  Map<String, MatchedProteinInformation> proteins ) throws Exception {
-		
+
 		MatchedProteins xmlMatchedProteins = new MatchedProteins();
 		limelightInputRoot.setMatchedProteins( xmlMatchedProteins );
-		
+
 		for( String sequence : proteins.keySet() ) {
 
 			Collection<FastaProteinAnnotation> fastaAnnotations = proteins.get( sequence ).getFastaProteinAnnotations();
@@ -154,25 +151,25 @@ public class MatchedProteinsBuilder {
 			if( fastaAnnotations.isEmpty() ) {
 				throw new Exception( "Did not get any fasta annotations (ie, name or description) for sequence: " + sequence );
 			}
-			
+
 			MatchedProtein xmlProtein = new MatchedProtein();
-        	xmlMatchedProteins.getMatchedProtein().add( xmlProtein );
-        	
-        	xmlProtein.setSequence( sequence );
-        	xmlProtein.setId( BigInteger.valueOf( proteins.get( sequence ).getId() ) );
-        	        	
-        	for( FastaProteinAnnotation anno : fastaAnnotations ) {
-        		MatchedProteinLabel xmlMatchedProteinLabel = new MatchedProteinLabel();
-        		xmlProtein.getMatchedProteinLabel().add( xmlMatchedProteinLabel );
-        		
-        		xmlMatchedProteinLabel.setName( anno.getName() );
-        		
-        		if( anno.getDescription() != null )
-        			xmlMatchedProteinLabel.setDescription( anno.getDescription() );
-        			
-        		if( anno.getTaxonomId() != null )
-        			xmlMatchedProteinLabel.setNcbiTaxonomyId( new BigInteger( anno.getTaxonomId().toString() ) );
-        	}
+			xmlMatchedProteins.getMatchedProtein().add( xmlProtein );
+
+			xmlProtein.setSequence( sequence );
+			xmlProtein.setId( BigInteger.valueOf( proteins.get( sequence ).getId() ) );
+
+			for( FastaProteinAnnotation anno : fastaAnnotations ) {
+				MatchedProteinLabel xmlMatchedProteinLabel = new MatchedProteinLabel();
+				xmlProtein.getMatchedProteinLabel().add( xmlMatchedProteinLabel );
+
+				xmlMatchedProteinLabel.setName( anno.getName() );
+
+				if( anno.getDescription() != null )
+					xmlMatchedProteinLabel.setDescription( anno.getDescription() );
+
+				if( anno.getTaxonomId() != null )
+					xmlMatchedProteinLabel.setNcbiTaxonomyId( new BigInteger( anno.getTaxonomId().toString() ) );
+			}
 		}
 	}
 
@@ -184,7 +181,7 @@ public class MatchedProteinsBuilder {
 	 * @return
 	 * @throws Exception If more than one protein sequence is matched by any protein name or if no id can be found for a protein name
 	 */
-	private Map<String, Integer> getMatchedProteinIdsForProteinNames( Map<String, MatchedProteinInformation> proteinSequenceAnnotations, Collection<String> proteinNames ) throws Exception {
+	private Map<String, Integer> getMatchedProteinIdsForProteinNames( Map<String, MatchedProteinInformation> proteinSequenceAnnotations, Set<String> proteinNames ) throws Exception {
 
 		Map<String, Integer> proteinNameIdMap = new HashMap<>();
 
@@ -224,27 +221,16 @@ public class MatchedProteinsBuilder {
 		return proteinNameIdMap;
 	}
 
-	private boolean fastaEntryContainProteinName( String proteinName, FASTAEntry fastaEntry ) {
 
+	private boolean proteinNamesContainFASTAEntry(Set<String> proteinNames, FASTAEntry fastaEntry) {
 		for( FASTAHeader header : fastaEntry.getHeaders() ) {
 
-			if( header.getName().equals( proteinName ) ) {
+			if(proteinNames.contains(header.getName())) {
 				return true;
 			}
-
 		}//end iterating over fasta headers
 
 		return false;
-	}
-
-	private String cleanProteinSequence( String proteinSequence ) {
-
-		// chop off trailing asterisk (stop codons)
-		if( proteinSequence.endsWith( "*" ) ) {
-			return proteinSequence.substring(0, proteinSequence.length() - 1);
-		}
-
-		return proteinSequence;
 	}
 
 
@@ -257,78 +243,61 @@ public class MatchedProteinsBuilder {
 	 * @return
 	 * @throws Exception if there is a problem reading the FASTA file
 	 */
-	private Map<String, MatchedProteinInformation> getProteinsUsingProteinNames( Collection<String> proteinNames, File fastaFile ) throws Exception {
+	private Map<String, MatchedProteinInformation> getProteinsUsingProteinNames(Set<String> proteinNames, File fastaFile ) throws Exception {
 
 		Map<String, MatchedProteinInformation> proteinAnnotations = new HashMap<>();
 
-		try ( FASTAFileParser parser = FASTAFileParserFactory.getInstance().getFASTAFileParser(  fastaFile ) ) {
-
+		try ( FASTAFileParser parser = FASTAFileParserFactory.getInstance().getFASTAFileParser( fastaFile ) ) {
 
 			int count = 0;
-			Collection<String> addedProteins = new HashSet<>();
-
 			System.err.println( "" );
 
-			for (FASTAEntry entry = parser.getNextEntry(); entry != null; entry = parser.getNextEntry() ) {
+			for ( FASTAEntry entry = parser.getNextEntry(); entry != null; entry = parser.getNextEntry() ) {
 
 				count++;
 
-				System.err.print( "\t\tTested " + count + " FASTA entries...\r" );
+				System.err.print( "\tTested " + count + " FASTA entries...\r" );
 
+				if(proteinNamesContainFASTAEntry(proteinNames, entry)) {
 
-				String sequence = entry.getSequence();
-				sequence = cleanProteinSequence( sequence );
+					String sequence = entry.getSequence();
 
-				for( String proteinName : proteinNames ) {
+					// remove any asterisks from the sequence
+					sequence = sequence.replaceAll("\\*", "");
 
-					// if we've already added an entry using this protein name, there shouldn't be any others
-					if( addedProteins.contains( proteinName ) ) {
-						continue;
+					MatchedProteinInformation mpi = null;
+					Collection<FastaProteinAnnotation> fastaAnnotations = null;
+
+					if( proteinAnnotations.containsKey( sequence ) ) {
+
+						mpi = proteinAnnotations.get( sequence );
+						fastaAnnotations = mpi.getFastaProteinAnnotations();
+					} else {
+
+						mpi = new MatchedProteinInformation();
+						proteinAnnotations.put(sequence, mpi);
+
+						mpi.setId(count);
+
+						fastaAnnotations = new HashSet<>();
+						mpi.setFastaProteinAnnotations( fastaAnnotations );
 					}
 
-					if( fastaEntryContainProteinName( proteinName, entry ) ) {
+					for( FASTAHeader header : entry.getHeaders() ) {
 
-						MatchedProteinInformation mpi = null;
-						Collection<FastaProteinAnnotation> fastaAnnotations = null;
+						FastaProteinAnnotation anno = new FastaProteinAnnotation();
+						anno.setName( header.getName() );
+						anno.setDescription( header.getDescription() );
 
-						if( proteinAnnotations.containsKey( sequence ) ) {
+						fastaAnnotations.add( anno );
 
-							mpi = proteinAnnotations.get( sequence );
-							fastaAnnotations = mpi.getFastaProteinAnnotations();
-						} else {
+					}//end iterating over fasta headers
 
-							mpi = new MatchedProteinInformation();
-							proteinAnnotations.put(sequence, mpi);
-
-							mpi.setId(count);
-
-							fastaAnnotations = new HashSet<>();
-							mpi.setFastaProteinAnnotations( fastaAnnotations );
-						}
-
-						for( FASTAHeader header : entry.getHeaders() ) {
-
-							FastaProteinAnnotation anno = new FastaProteinAnnotation();
-							anno.setName( header.getName() );
-							anno.setDescription( header.getDescription() );
-
-							fastaAnnotations.add( anno );
-
-						}//end iterating over fasta headers
-
-						addedProteins.add( proteinName );
-
-						break;	// don't need to test more protein names, we are including this protein
-
-					}// end headerline matched protein
-
-				}// end iterating over protein nnames
+				}
 
 			}// end iterating over fasta entries
 
-
 			System.err.print( "\n" );
-
 		}
 
 		return proteinAnnotations;
@@ -359,17 +328,17 @@ public class MatchedProteinsBuilder {
 			this.id = id;
 		}
 	}
-	
-	
+
+
 	/**
 	 * An annotation for a protein in a Fasta file
-	 * 
+	 *
 	 * @author mriffle
 	 *
 	 */
 	private class FastaProteinAnnotation {
 
-		
+
 		/* (non-Javadoc)
 		 * @see java.lang.Object#hashCode()
 		 */
@@ -414,7 +383,7 @@ public class MatchedProteinsBuilder {
 				return false;
 			return true;
 		}
-		
+
 		public String getName() {
 			return name;
 		}
@@ -434,15 +403,16 @@ public class MatchedProteinsBuilder {
 			this.taxonomId = taxonomId;
 		}
 
-		
-		
+
+
 		private String name;
 		private String description;
 		private Integer taxonomId;
 		private MatchedProteinsBuilder getOuterType() {
 			return MatchedProteinsBuilder.this;
 		}
-		
+
+
 	}
-	
+
 }
