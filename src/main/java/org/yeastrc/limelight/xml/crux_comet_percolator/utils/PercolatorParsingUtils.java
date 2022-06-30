@@ -112,5 +112,5 @@ public class PercolatorParsingUtils {
 
 	private static final Pattern targetScanIdPattern = Pattern.compile("^target_(\\d+)_\\d+_\\d+_\\d+$");
 
-	private static final Pattern percolatorPeptideStringModPattern = Pattern.compile("^[A-Z]+\\[\\d+\\.(\\d+)]");
+	private static final Pattern percolatorPeptideStringModPattern = Pattern.compile("^[A-Z]+\\[\\d+\\.(\\d+)\\][A-Z]*$");
 }
