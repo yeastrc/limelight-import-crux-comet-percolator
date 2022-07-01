@@ -213,7 +213,12 @@ public class XMLBuilder {
 		limelightInputRoot.setReportedPeptides( reportedPeptides );
 		
 		// iterate over each distinct reported peptide
+		int totalPeptides = percolatorResults.getIndexedReportedPeptideResults().size();
+		int count = 0;
 		for( String percolatorReportedPeptide : percolatorResults.getIndexedReportedPeptideResults().keySet() ) {
+
+			count++;
+			System.err.print( "Processing peptide " + count + " of " + totalPeptides + "...\r" );
 
 			IndexedPercolatorPeptideData indexedPercolatorPeptideData = percolatorResults.getIndexedReportedPeptideResults().get( percolatorReportedPeptide );
 
@@ -458,8 +463,8 @@ public class XMLBuilder {
 			}
 		
 		}//end iterating over reported peptides
+		System.err.print("\n");
 
-		
 		
 		// add in the config file(s)
 		ConfigurationFiles xmlConfigurationFiles = new ConfigurationFiles();
@@ -495,8 +500,9 @@ public class XMLBuilder {
 		}
 		
 		//make the xml file
+		System.err.print("Writing XML to disk... ");
 		CreateImportFileFromJavaObjectsMain.getInstance().createImportFileFromJavaObjectsMain( conversionParameters.getOutputFile(), limelightInputRoot);
-
+		System.err.print("Done.\n");
 	}
 
 	

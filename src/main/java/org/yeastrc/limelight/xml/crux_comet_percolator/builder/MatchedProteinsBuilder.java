@@ -42,19 +42,23 @@ public class MatchedProteinsBuilder {
 	 * @throws Exception
 	 */
 	public Map<String, Integer> buildMatchedProteins( LimelightInput limelightInputRoot, File fastaFile, Collection<CometReportedPeptide> reportedPeptides ) throws Exception {
-		
-		System.err.print( " Matching peptides to proteins..." );
+
+		System.err.println("\nBuilding MatchedProteins...");
 
 		// all protein names matched by any peptide
+		System.err.print("\tCollating found protein names... ");
 		Set<String> proteinNames = getAllProteinsFromResults( reportedPeptides );
+		System.err.println("Done.");
 
 		// find the proteins matched by any of these peptides (map of sequence => fasta annotations
+		System.err.print("\tSearching FASTA for matched proteins... ");
 		Map<String, MatchedProteinInformation> proteins = getProteinsUsingProteinNames( proteinNames, fastaFile );
 
 		{
+			System.err.print("\tRemoving matched proteins not found in FASTA... ");
+
 			Collection<String> proteinNamesNotFoundInFasta = getProteinNamesNotFoundInFasta(proteinNames, proteins);
 			if (proteinNamesNotFoundInFasta.size() > 0) {
-//				throw new Exception("The following protein names were not found in FASTA: " + String.join(", ", proteinNamesNotFoundInFasta));
 
 				// remove proteins not found in the FASTA, likely spill over of decoys
 				for(String p : proteinNamesNotFoundInFasta) {
@@ -62,15 +66,21 @@ public class MatchedProteinsBuilder {
 					proteinNames.remove(p);
 				}
 			}
+			System.err.println("Done.");
 		}
 
 
-
 		// map and validate protein names to protein sequence ids
+		System.err.print("\tMapping protein names to internal reference ids... ");
 		Map<String, Integer> proteinNameIdMap = getMatchedProteinIdsForProteinNames( proteins, proteinNames );
+		System.err.println("Done.");
 
 		// create the XML and add to root element
+		System.err.print("\tBuild MatchedProteins XML... ");
 		buildAndAddMatchedProteinsToXML( limelightInputRoot, proteins );
+		System.err.println("Done.");
+
+		System.err.println("Done building MatchedProteins");
 
 		return proteinNameIdMap;
 	}
@@ -102,31 +112,22 @@ public class MatchedProteinsBuilder {
 
 		Collection<String> proteins = new HashSet<>();
 
-		for( String proteinName : proteinNames ) {
-
-			boolean found = false;
-
-			for( MatchedProteinInformation mpi :proteinFastaAnnotations.values() ) {
-
-				for( FastaProteinAnnotation anno : mpi.getFastaProteinAnnotations() ) {
-
-					if( anno.getName().equals( proteinName ) ) {
-						found = true;
-						break;
-					}
-
-				}
-
+		// get all unique protein names from FASTA (that matched any results)
+		Set<String> fastaProteinNames = new HashSet<>();
+		for( MatchedProteinInformation mpi :proteinFastaAnnotations.values() ) {
+			for( FastaProteinAnnotation anno : mpi.getFastaProteinAnnotations() ) {
+				fastaProteinNames.add(anno.getName());
 			}
+		}
 
-			if( !found ) {
+		// find all entries in proteinNames not in fastaProteinNames
+		for( String proteinName : proteinNames ) {
+			if( !fastaProteinNames.contains(proteinName) ) {
 				proteins.add( proteinName );
 			}
-
 		}
 
 		return proteins;
-
 	}
 
 
@@ -185,38 +186,27 @@ public class MatchedProteinsBuilder {
 
 		Map<String, Integer> proteinNameIdMap = new HashMap<>();
 
-		for( String proteinName : proteinNames ) {
+		// get all unique protein names from FASTA (that matched any results)
+		Map<String, Integer> fastaProteinNameIdMap = new HashMap<>();
+		for( MatchedProteinInformation mpi :proteinSequenceAnnotations.values() ) {
+			for( FastaProteinAnnotation anno : mpi.getFastaProteinAnnotations() ) {
+				if(fastaProteinNameIdMap.containsKey(anno.getName()) && fastaProteinNameIdMap.get(anno.getName()) != mpi.getId()) {
 
-			boolean foundMatch = false;
-
-			for( MatchedProteinInformation mpi : proteinSequenceAnnotations.values() ) {
-
-				for( FastaProteinAnnotation fpa : mpi.getFastaProteinAnnotations() ) {
-
-					if( fpa.getName().equals( proteinName ) ) {
-
-						// if this is true, then we already found a protein sequence with this name. this is ambiguous and we have to fail
-						if( foundMatch ) {
-							throw new Exception( "Found more than one FASTA entry for protein name: " + proteinName );
-						}
-
-						proteinNameIdMap.put( proteinName, mpi.getId() );
-						foundMatch = true;
-
-						break;	// no need to test rest of fasta annos for sequence
-
-					}
-
+					// if this is true, then we already found a protein sequence with this name. this is ambiguous and we have to fail
+					throw new Exception( "Found more than one FASTA entry for protein name: " + anno.getName() );
 				}
 
+				fastaProteinNameIdMap.put(anno.getName(), mpi.getId());
 			}
-
-			if( !foundMatch ) {
-				throw new Exception( "Could not find FASTA entry for protein name: " + proteinName );
-			}
-
 		}
 
+		for( String proteinName : proteinNames ) {
+			if (fastaProteinNameIdMap.containsKey(proteinName)) {
+				proteinNameIdMap.put(proteinName, fastaProteinNameIdMap.get(proteinName));
+			} else {
+				throw new Exception("Could not find FASTA entry for protein name: " + proteinName);
+			}
+		}
 
 		return proteinNameIdMap;
 	}
@@ -256,7 +246,7 @@ public class MatchedProteinsBuilder {
 
 				count++;
 
-				System.err.print( "\tTested " + count + " FASTA entries...\r" );
+				System.err.print( "\t\tTested " + count + " FASTA entries... \r" );
 
 				if(proteinNamesContainFASTAEntry(proteinNames, entry)) {
 
