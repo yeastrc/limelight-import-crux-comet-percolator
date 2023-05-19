@@ -38,7 +38,7 @@ public class ReportedPeptideUtils {
 		    
 		    if( mods.containsKey( position ) ) {
 		    	
-		    	BigDecimal v = mods.get( position ).setScale( percolatorModDecimalPlaces, RoundingMode.HALF_UP );
+		    	BigDecimal v = mods.get( position ).setScale( percolatorModDecimalPlaces, RoundingMode.HALF_EVEN );
 		    	sb.append( "[" );
 		    	sb.append( v.toString() );
 		    	sb.append( "]" );
@@ -48,7 +48,7 @@ public class ReportedPeptideUtils {
 
 		// add in n-term mod
 		if( mods.containsKey( 0 ) ) {
-			BigDecimal v = mods.get( 0 ).setScale( percolatorModDecimalPlaces, RoundingMode.HALF_UP );
+			BigDecimal v = mods.get( 0 ).setScale( percolatorModDecimalPlaces, RoundingMode.HALF_EVEN );
 
 			sb.insert( 0, "n[" + v.toString() + "]" );
 		}
@@ -56,7 +56,7 @@ public class ReportedPeptideUtils {
 
 		// add in c-term mod
 		if( mods.containsKey( sequence.length() + 1 ) ) {
-			BigDecimal v = mods.get( sequence.length() + 1 ).setScale( percolatorModDecimalPlaces, RoundingMode.HALF_UP );
+			BigDecimal v = mods.get( sequence.length() + 1 ).setScale( percolatorModDecimalPlaces, RoundingMode.HALF_EVEN );
 
 			sb.append( "c[" + v.toString() + "]" );
 		}
