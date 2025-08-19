@@ -21,16 +21,17 @@ package org.yeastrc.limelight.xml.crux_comet_percolator.objects;
 import java.time.LocalDateTime;
 
 import org.yeastrc.limelight.xml.crux_comet_percolator.constants.Constants;
+import org.yeastrc.limelight.xml.crux_comet_percolator.utils.Limelight_GetVersion_FromFile_SetInBuildFromEnvironmentVariable;
 
 public class ConversionProgramInfo {
 	
-	public static ConversionProgramInfo createInstance( String arguments ) {
+	public static ConversionProgramInfo createInstance( String arguments ) throws Exception {
 		
 		ConversionProgramInfo cpi = new ConversionProgramInfo();
 		
 		cpi.setName( Constants.CONVERSION_PROGRAM_NAME );
 		cpi.setURI( Constants.CONVERSION_PROGRAM_URI );
-		cpi.setVersion( Constants.CONVERSION_PROGRAM_VERSION );
+		cpi.setVersion( Limelight_GetVersion_FromFile_SetInBuildFromEnvironmentVariable.getVersion_FromFile_SetInBuildFromEnvironmentVariable() );
 		
 		cpi.setArguments( arguments );
 		cpi.setConversionDate( LocalDateTime.now() );

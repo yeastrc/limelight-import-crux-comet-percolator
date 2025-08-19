@@ -21,6 +21,7 @@ hs_err_pid*
 
 .classpath
 .project
+/.settings/
 /deploy/
 /resources/
 /classes/
