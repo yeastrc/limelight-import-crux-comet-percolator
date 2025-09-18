@@ -20,16 +20,16 @@ repositories {
     mavenCentral()
 
     maven {
-        url 'https://raw.github.com/yeastrc/pepxml-parsing-jaxb-libs/repository/'
+        url 'https://raw.githubusercontent.com/yeastrc/pepxml-parsing-jaxb-libs/repository/'
     }
     maven {
-        url 'https://raw.github.com/yeastrc/java-fasta-utils/repository/'
+        url 'https://raw.githubusercontent.com/yeastrc/java-fasta-utils/repository/'
     }
     maven {
-        url 'https://raw.github.com/yeastrc/limelight-import-api/repository/'
+        url 'https://raw.githubusercontent.com/yeastrc/limelight-import-api/repository/'
     }
     maven {
-        url 'https://raw.github.com/yeastrc/percolator-utils/repository/'
+        url 'https://raw.githubusercontent.com/yeastrc/percolator-utils/repository/'
     }
 }
 
